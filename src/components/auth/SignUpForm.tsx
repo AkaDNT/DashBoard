@@ -5,8 +5,14 @@ import Label from "@/components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
+import Alert from "@/components/ui/alert/Alert";
+import { extractRtqErrorMessage } from "@/lib/utils/rtkError";
+import { useSignupMutation } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -14,13 +20,31 @@ export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+
+  const [signUp, { isLoading, error }] = useSignupMutation();
 
   const passwordsMatch = useMemo(() => confirm.length === 0 || password === confirm, [password, confirm]);
-  const canSubmit = useMemo(() => username && password && email && confirm && passwordsMatch && isChecked, [username, password, email, confirm, passwordsMatch, isChecked]);
+  const canSubmit = useMemo(
+    () => Boolean(username && password && email && confirm && passwordsMatch && isChecked),
+    [username, password, email, confirm, passwordsMatch, isChecked]
+  );
 
-  const onSubmit = (e: React.FormEvent) => {
+  const hookErrorMsg = useMemo(() => (error ? extractRtqErrorMessage(error) : null), [error]);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
+    setServerError(null);
+    setServerSuccess(null);
+    try {
+      await signUp({ username, email, password }).unwrap();
+      setServerSuccess("Account created. Redirecting to sign in...");
+      setTimeout(() => router.push("/signin"), 500);
+    } catch (err) {
+      setServerError(extractRtqErrorMessage(err));
+    }
   };
 
   return (
@@ -31,14 +55,15 @@ export default function SignUpForm() {
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
               Sign Up
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Create your account to get started.
-            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Create your account to get started.</p>
           </div>
 
           <div>
             <div className="flex justify-center">
-              <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
+              >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z" fill="#4285F4"/>
                   <path d="M10.1788 18.75C12.5895 18.75 14.6133 17.9722 16.0915 16.6305L13.274 14.4916C12.5201 15.0068 11.5081 15.3666 10.1788 15.3666C7.81773 15.3666 5.81379 13.8402 5.09944 11.7305L4.99473 11.7392L2.23868 13.8295L2.20264 13.9277C3.67087 16.786 6.68674 18.75 10.1788 18.75Z" fill="#34A853"/>
@@ -74,8 +99,11 @@ export default function SignUpForm() {
                     required
                   />
                 </div>
+
                 <div>
-                  <Label>Username<span className="text-error-500">*</span></Label>
+                  <Label>
+                    Username<span className="text-error-500">*</span>
+                  </Label>
                   <Input
                     type="text"
                     id="username"
@@ -89,7 +117,9 @@ export default function SignUpForm() {
                 </div>
 
                 <div>
-                  <Label>Password<span className="text-error-500">*</span></Label>
+                  <Label>
+                    Password<span className="text-error-500">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       placeholder="Enter your password"
@@ -104,17 +134,15 @@ export default function SignUpForm() {
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                      )}
+                      {showPassword ? <EyeIcon className="fill-gray-500 dark:fill-gray-400" /> : <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <Label>Confirm Password<span className="text-error-500">*</span></Label>
+                  <Label>
+                    Confirm Password<span className="text-error-500">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       placeholder="Re-enter your password"
@@ -129,33 +157,34 @@ export default function SignUpForm() {
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                       aria-label={showConfirm ? "Hide password" : "Show password"}
                     >
-                      {showConfirm ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                      )}
+                      {showConfirm ? <EyeIcon className="fill-gray-500 dark:fill-gray-400" /> : <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />}
                     </span>
                   </div>
-                  {!passwordsMatch && (
-                    <p className="mt-2 text-sm text-error-500">Passwords do not match.</p>
-                  )}
+                  {!passwordsMatch && <p className="mt-2 text-sm text-error-500">Passwords do not match.</p>}
                 </div>
 
                 <div className="flex items-center gap-3">
                   <Checkbox className="w-5 h-5" checked={isChecked} onChange={setIsChecked} />
                   <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
-                    I agree to the <span className="text-gray-800 dark:text-white/90">Terms and Conditions</span> and the{" "}
-                    <span className="text-gray-800 dark:text-white">Privacy Policy</span>.
+                    I agree to the <span className="text-gray-800 dark:text-white/90">Terms and Conditions</span> and the <span className="text-gray-800 dark:text-white">Privacy Policy</span>.
                   </p>
                 </div>
+
+                {(serverError || hookErrorMsg) && (
+                  <Alert variant="error" title="Sign up failed" message={serverError || hookErrorMsg || "Something went wrong"} />
+                )}
+
+                {serverSuccess && (
+                  <Alert variant="success" title="Success" message={serverSuccess} />
+                )}
 
                 <div>
                   <button
                     className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed"
                     type="submit"
-                    disabled={!canSubmit}
+                    disabled={!canSubmit || isLoading}
                   >
-                    Create Account
+                    {isLoading ? "Creating account..." : "Create Account"}
                   </button>
                 </div>
               </div>
@@ -170,7 +199,6 @@ export default function SignUpForm() {
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </div>

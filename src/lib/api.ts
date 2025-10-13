@@ -52,7 +52,10 @@ export const api = createApi({
         dispatch(setJwtToken(data.token));
       },
     }),
+    signup: build.mutation< void, { email: string ;username: string; password: string }>({
+      query: (body) => ({ url: "authenticate/register", method: "POST", body }),
+    }),
   }),
 });
 
-export const { useGetMeQuery, useLazyGetMeQuery, useLoginMutation } = api;
+export const { useGetMeQuery, useLazyGetMeQuery, useLoginMutation, useSignupMutation } = api;
