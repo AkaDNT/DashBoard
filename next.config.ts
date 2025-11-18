@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        // upstream HTTP nội bộ — KHÔNG để http URL này lộ ra client
+        destination: `${process.env.INTERNAL_API_ORIGIN}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,7 +1,7 @@
 "use client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "./store";
-import { setJwtToken} from "./slices/authSlice";
+import { setJwtToken } from "./slices/authSlice";
 
 export interface User {
   id?: number;
@@ -9,8 +9,12 @@ export interface User {
   email: string;
 }
 
+interface TotalUsersResponse {
+  totalUsers: number;
+}
+
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://apibackend.runasp.net/api/",
+  baseUrl: "/api/",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.jwtToken;
     if (token) headers.set("authorization", `Bearer ${token}`);
@@ -52,10 +56,19 @@ export const api = createApi({
         dispatch(setJwtToken(data.token));
       },
     }),
-    signup: build.mutation< void, { email: string ;username: string; password: string }>({
+    signup: build.mutation<void, { email: string; username: string; password: string }>({
       query: (body) => ({ url: "authenticate/register", method: "POST", body }),
+    }),
+    getTotalUsers: build.query<TotalUsersResponse, void>({
+      query: () => ({ url: "Admin/total-users", method: "GET" }),
     }),
   }),
 });
 
-export const { useGetMeQuery, useLazyGetMeQuery, useLoginMutation, useSignupMutation } = api;
+export const {
+  useGetMeQuery,
+  useLazyGetMeQuery,
+  useLoginMutation,
+  useSignupMutation,
+  useGetTotalUsersQuery,
+} = api;
