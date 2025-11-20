@@ -13,6 +13,35 @@ interface TotalUsersResponse {
   totalUsers: number;
 }
 
+interface TotalOrdersResponse {
+  totalOrders: number;
+}
+
+export interface OrderItem {
+  productID: string;
+  productName: string;
+  image: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface ReceiveInfo {
+  name: string;
+  phone: string;
+  address: string;
+}
+
+export interface Order {
+  orderID: string;
+  userID: number;
+  items: OrderItem[];
+  totalAmount: number;
+  paymentMethod: string;
+  status: string;
+  createdAt: string; 
+  receiveInfo: ReceiveInfo;
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/api/",
   prepareHeaders: (headers, { getState }) => {
@@ -49,18 +78,32 @@ export const api = createApi({
     getMe: build.query<User, void>({
       query: () => ({ url: "user/info/me", method: "GET" }),
     }),
-    login: build.mutation<{ token: string }, { username: string; password: string }>({
-      query: (body) => ({ url: "authenticate/login", method: "POST", body }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(setJwtToken(data.token));
-      },
-    }),
-    signup: build.mutation<void, { email: string; username: string; password: string }>({
-      query: (body) => ({ url: "authenticate/register", method: "POST", body }),
-    }),
+    login: build.mutation<{ token: string }, { username: string; password: string }>(
+      {
+        query: (body) => ({ url: "authenticate/login", method: "POST", body }),
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          const { data } = await queryFulfilled;
+          dispatch(setJwtToken(data.token));
+        },
+      }
+    ),
+    signup: build.mutation<void, { email: string; username: string; password: string }>(
+      {
+        query: (body) => ({ url: "authenticate/register", method: "POST", body }),
+      }
+    ),
     getTotalUsers: build.query<TotalUsersResponse, void>({
       query: () => ({ url: "Admin/total-users", method: "GET" }),
+    }),
+    getTotalOrders: build.query<TotalOrdersResponse, void>({
+      query: () => ({ url: "Admin/total-orders", method: "GET" }),
+    }),
+
+    getOrders: build.query<Order[], void>({
+      query: () => ({
+        url: "Order", 
+        method: "GET",
+      }),
     }),
   }),
 });
@@ -71,4 +114,6 @@ export const {
   useLoginMutation,
   useSignupMutation,
   useGetTotalUsersQuery,
+  useGetTotalOrdersQuery,
+  useGetOrdersQuery,
 } = api;

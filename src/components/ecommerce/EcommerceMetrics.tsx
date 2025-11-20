@@ -2,13 +2,26 @@
 import React from "react";
 import Badge from "../ui/badge/Badge";
 import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
-import { useGetTotalUsersQuery } from "@/lib/api";
+import { useGetTotalUsersQuery, useGetTotalOrdersQuery } from "@/lib/api";
 
 export const EcommerceMetrics = () => {
-  const { data, isLoading, isError } = useGetTotalUsersQuery();
+  const {
+    data: usersData,
+    isLoading: isUsersLoading,
+    isError: isUsersError,
+  } = useGetTotalUsersQuery();
+
+  const {
+    data: ordersData,
+    isLoading: isOrdersLoading,
+    isError: isOrdersError,
+  } = useGetTotalOrdersQuery();
 
   const displayTotalUsers =
-    isLoading || isError || !data ? 0 : data.totalUsers;
+    isUsersLoading || isUsersError || !usersData ? "Loading..." : usersData.totalUsers;
+
+  const displayTotalOrders =
+    isOrdersLoading || isOrdersError || !ordersData ? "Loading..." : ordersData.totalOrders;
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
@@ -43,7 +56,7 @@ export const EcommerceMetrics = () => {
               Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {displayTotalOrders.toLocaleString("vi-VN")}
             </h4>
           </div>
 
