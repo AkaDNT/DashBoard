@@ -36,10 +36,28 @@ export interface Order {
   userID: number;
   items: OrderItem[];
   totalAmount: number;
-  paymentMethod: string;
+  paymentMethod: string | null;
   status: string;
-  createdAt: string; 
-  receiveInfo: ReceiveInfo;
+  createdAt: string;
+  receiveInfo: ReceiveInfo | null;
+}
+
+export interface TopSellerDto {
+  productId: string;
+  productName: string;
+  image: string;
+  category: string;
+  rating: number;
+  orderCount: number;
+  selledCount: number;
+}
+
+export interface PagedOrdersResponse {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  data: Order[];
 }
 
 const rawBaseQuery = fetchBaseQuery({
@@ -105,6 +123,22 @@ export const api = createApi({
         method: "GET",
       }),
     }),
+
+    getTopSellers: build.query<TopSellerDto[], void>({
+      query: () => ({ url: "Admin/top-sellers", method: "GET" }),
+    }),
+
+    getRecentOrders: build.query<Order[], void>({
+      query: () => ({ url: "Admin/recent-orders", method: "GET" }),
+    }),
+
+    getSortedOrders: build.query<PagedOrdersResponse, { page: number }>({
+      query: ({ page }) => ({
+        url: "Admin/sorted-orders",
+        method: "GET",
+        params: { page },
+      }),
+    }),
   }),
 });
 
@@ -116,4 +150,7 @@ export const {
   useGetTotalUsersQuery,
   useGetTotalOrdersQuery,
   useGetOrdersQuery,
+  useGetTopSellersQuery,
+  useGetRecentOrdersQuery,
+  useGetSortedOrdersQuery
 } = api;
