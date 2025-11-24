@@ -15,9 +15,9 @@ import {
   PieChartIcon,
   PlugInIcon,
   TableIcon,
+  TaskIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -39,13 +39,18 @@ const navItems: NavItem[] = [
   },
   {
     icon: <UserCircleIcon />,
-    name: "User Profile",
+    name: "Your Profile",
     path: "/profile",
   },
-
   {
-    name: "Forms",
-    icon: <ListIcon />,
+    icon: <TaskIcon />,
+    name: "Users",
+    path: "/users",
+  },
+  {
+    icon: <ListIcon/>,
+    name: "Products",
+    path: "/products",
   },
   {
     name: "Orders",
@@ -53,12 +58,9 @@ const navItems: NavItem[] = [
     path: "/orders"
   },
   {
-    name: "Pages",
+    name: "Server Health",
     icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
+    path: "/server-health"
   },
 ];
 
@@ -377,7 +379,6 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
     </aside>
   );

@@ -30,8 +30,6 @@ export default function UserDropdown() {
     router.push("/signin");
   }
 
-  console.log(me)
-
   const displayName = isLoading ? "Loading..." : me?.username ?? "Guest";
   const displayEmail = isLoading ? "Loading..." : me?.email ?? "-";
 

@@ -60,6 +60,26 @@ export interface PagedOrdersResponse {
   data: Order[];
 }
 
+export interface UserProfileBanking {
+  bankAccount: string | null;
+  creditCard: string | null;
+}
+
+export interface UserProfile {
+  id: string;
+  userId: number;
+  name: string | null;
+  avatar: string;
+  phoneNumber: string;
+  gender: string;
+  category: Record<string, unknown>;
+  cart: unknown[];
+  wishlist: unknown[];
+  receiveInfo: unknown[];
+  birthday: string;
+  banking: UserProfileBanking;
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/api/",
   prepareHeaders: (headers, { getState }) => {
@@ -139,6 +159,40 @@ export const api = createApi({
         params: { page },
       }),
     }),
+    getUserProfile: build.query<UserProfile, void>({
+      query: () => ({ url: "User/Info/Profile", method: "GET" }),
+    }),
+    updateUserProfile: build.mutation<UserProfile, UserProfile>({
+      query: (body) => ({
+        url: "User/Profile/Update",
+        method: "PUT",
+        body,
+      }),
+    }),
+     getOrderById: build.query<Order, string | number>({
+      query: (id) => ({
+        url: `Order/${id}`,
+        method: "GET",
+      }),
+    }),
+    updateOrderStatus: build.mutation<string, { orderId: string; newStatus: string }>(
+  {
+    query: ({ orderId, newStatus }) => ({
+      url: `Order/status/${orderId}`,
+      method: "PUT",
+
+      // backend expect JSON string: "Pending"
+      body: JSON.stringify(newStatus),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      // BẮT BUỘC: bảo RTK Query parse response dạng text, không phải JSON
+      responseHandler: (response) => response.text(), // hoặc "text"
+    }),
+  }
+),
   }),
 });
 
@@ -152,5 +206,9 @@ export const {
   useGetOrdersQuery,
   useGetTopSellersQuery,
   useGetRecentOrdersQuery,
-  useGetSortedOrdersQuery
+  useGetSortedOrdersQuery,
+  useGetUserProfileQuery,
+  useUpdateUserProfileMutation,
+  useGetOrderByIdQuery,
+  useUpdateOrderStatusMutation
 } = api;
