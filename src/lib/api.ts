@@ -181,18 +181,23 @@ export const api = createApi({
       url: `Order/status/${orderId}`,
       method: "PUT",
 
-      // backend expect JSON string: "Pending"
       body: JSON.stringify(newStatus),
 
       headers: {
         "Content-Type": "application/json",
       },
 
-      // BẮT BUỘC: bảo RTK Query parse response dạng text, không phải JSON
-      responseHandler: (response) => response.text(), // hoặc "text"
+      responseHandler: (response) => response.text(), 
     }),
   }
 ),
+deleteOrders: build.mutation<number, string[]>({
+      query: (orderIds) => ({
+        url: "Order/Admin/orders",
+        method: "DELETE",
+        body: orderIds, 
+      }),
+    }),
   }),
 });
 
@@ -210,5 +215,6 @@ export const {
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useGetOrderByIdQuery,
-  useUpdateOrderStatusMutation
+  useUpdateOrderStatusMutation,
+  useDeleteOrdersMutation
 } = api;

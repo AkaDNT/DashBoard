@@ -14,8 +14,11 @@ import {
   useGetSortedOrdersQuery,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
+  useDeleteOrdersMutation,
 } from "@/lib/api";
 import { Modal } from "@/components/ui/modal";
+import { useRouter } from "next/navigation";
+import Alert from "@/components/ui/alert/Alert"; // 👈 THÊM
 
 type OrderStatus =
   | "Delivered"
@@ -101,7 +104,14 @@ const Pagination: React.FC<PaginationProps> = ({
   );
 };
 
+type AlertState = {
+  variant: "success" | "error" | "warning" | "info";
+  title: string;
+  message: string;
+} | null;
+
 const OrdersPage: React.FC = () => {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -110,6 +120,12 @@ const OrdersPage: React.FC = () => {
   // modal chi tiết
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [statusInput, setStatusInput] = useState<OrderStatus>("Pending");
+
+  // modal xác nhận xoá
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  // Alert state
+  const [alert, setAlert] = useState<AlertState>(null);
 
   const singleSelectedId =
     selectedOrderIds.length === 1 ? selectedOrderIds[0] : null;
@@ -136,12 +152,20 @@ const OrdersPage: React.FC = () => {
   const [updateOrderStatus, { isLoading: isUpdatingStatus }] =
     useUpdateOrderStatusMutation();
 
-  // sync status từ API vào select
+  const [deleteOrders, { isLoading: isDeleting }] = useDeleteOrdersMutation();
+
   useEffect(() => {
     if (selectedOrder && selectedOrder.status) {
       setStatusInput(selectedOrder.status as OrderStatus);
     }
   }, [selectedOrder]);
+
+  // auto hide alert sau 3s (có thể chỉnh tuỳ ý)
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 3000);
+    return () => clearTimeout(timer);
+  }, [alert]);
 
   const rows: OrderRow[] = useMemo(() => {
     if (!data?.data) return [];
@@ -221,14 +245,90 @@ const OrdersPage: React.FC = () => {
       // refetch lại list + chi tiết
       await Promise.all([refetchOrders(), refetchOrder()]);
       setIsDetailOpen(false);
+      router.refresh();
+
+      // Alert thành công
+      setAlert({
+        variant: "success",
+        title: "Lưu thành công",
+        message: "Trạng thái đơn hàng đã được cập nhật.",
+      });
     } catch (error) {
       console.error("Failed to update order status", error);
+      setAlert({
+        variant: "error",
+        title: "Lỗi",
+        message: "Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại.",
+      });
     }
+  };
+
+  // mở modal xác nhận xoá
+  const handleOpenDeleteConfirm = () => {
+    if (selectedOrderIds.length === 0) return;
+    setIsDeleteConfirmOpen(true);
+  };
+
+  // xác nhận xoá trong modal
+  const handleConfirmDelete = async () => {
+    if (selectedOrderIds.length === 0) {
+      setIsDeleteConfirmOpen(false);
+      return;
+    }
+
+    const idsToDelete = [...selectedOrderIds];
+
+    try {
+      await deleteOrders(idsToDelete).unwrap(); // body: string[]
+      setSelectedOrderIds([]);
+      await refetchOrders();
+
+      // nếu đang mở modal của order vừa xoá thì đóng lại
+      if (
+        isDetailOpen &&
+        singleSelectedId &&
+        idsToDelete.includes(singleSelectedId)
+      ) {
+        setIsDetailOpen(false);
+      }
+
+      setIsDeleteConfirmOpen(false);
+
+      // Alert xoá thành công
+      setAlert({
+        variant: "success",
+        title: "Xoá thành công",
+        message: `Đã xoá ${idsToDelete.length} đơn hàng.`,
+      });
+    } catch (error) {
+      console.error("Failed to delete orders", error);
+      setAlert({
+        variant: "error",
+        title: "Lỗi",
+        message: "Không thể xoá đơn hàng. Vui lòng thử lại.",
+      });
+    }
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setIsDeleteConfirmOpen(false);
   };
 
   return (
     <div className="space-y-6">
       <PageBreadcrumb pageTitle="Orders" />
+
+      {alert && (
+  <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4">
+    <div className="w-full max-w-md">
+      <Alert
+        variant={alert.variant}
+        title={alert.title}
+        message={alert.message}
+      />
+    </div>
+  </div>
+)}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         {/* Header + actions */}
@@ -280,7 +380,11 @@ const OrdersPage: React.FC = () => {
               </svg>
               View details
             </button>
-            <button className="inline-flex h-10 items-center gap-2 rounded-lg border border-red-500/70 bg-red-500/10 px-3.5 text-sm font-medium text-red-600 shadow-theme-xs hover:bg-red-500/15 dark:border-red-500/60 dark:bg-red-500/10 dark:text-red-300">
+            <button
+              onClick={handleOpenDeleteConfirm}
+              disabled={selectedOrderIds.length === 0 || isDeleting}
+              className="inline-flex h-10 items-center gap-2 rounded-lg border border-red-500/70 bg-red-500/10 px-3.5 text-sm font-medium text-red-600 shadow-theme-xs hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/60 dark:bg-red-500/10 dark:text-red-300"
+            >
               <svg
                 className="h-4 w-4"
                 viewBox="0 0 20 20"
@@ -294,7 +398,7 @@ const OrdersPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>
@@ -532,7 +636,7 @@ const OrdersPage: React.FC = () => {
                 {/* Receive info */}
                 {selectedOrder.receiveInfo && (
                   <section className="space-y-3">
-                    <h5 className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                    <h5 className="text-sm font-semibold text-gray-800 dark:text:white/90">
                       Receive information
                     </h5>
                     <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
@@ -620,7 +724,7 @@ const OrdersPage: React.FC = () => {
             <button
               type="button"
               onClick={handleCloseDetails}
-              className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
+              className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg:white/[0.03]"
             >
               Close
             </button>
@@ -631,6 +735,44 @@ const OrdersPage: React.FC = () => {
               className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isUpdatingStatus ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal xác nhận xoá */}
+      <Modal
+        isOpen={isDeleteConfirmOpen}
+        onClose={handleCloseDeleteConfirm}
+        className="m-4 max-w-md"
+      >
+        <div className="w-full max-w-md rounded-3xl bg-white p-6 dark:bg-gray-900">
+          <h4 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
+            Confirm delete
+          </h4>
+          <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">
+              {selectedOrderIds.length} selected order
+              {selectedOrderIds.length > 1 ? "s" : ""}
+            </span>
+            ? This action cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={handleCloseDeleteConfirm}
+              className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="inline-flex items-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>
