@@ -19,6 +19,7 @@ import {
 import { Modal } from "@/components/ui/modal";
 import { useRouter } from "next/navigation";
 import Alert from "@/components/ui/alert/Alert"; // 👈 THÊM
+import Image from "next/image";
 
 type OrderStatus =
   | "Delivered"
@@ -688,7 +689,7 @@ const OrdersPage: React.FC = () => {
                           <tr key={item.productID}>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
-                                <img
+                                <Image
                                   src={item.image}
                                   alt={item.productName}
                                   className="h-10 w-10 flex-shrink-0 rounded-lg object-cover"

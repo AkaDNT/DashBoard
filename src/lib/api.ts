@@ -80,6 +80,55 @@ export interface UserProfile {
   banking: UserProfileBanking;
 }
 
+export interface MongoOverview {
+  databaseName: string;
+  collections: number;
+  objects: number;
+  dataSize: number;
+  storageSize: number;
+  indexes: number;
+  indexSize: number;
+  currentConnections: number;
+  availableConnections: number;
+}
+
+export interface MongoServerMetrics {
+  currentConnections: number;
+  availableConnections: number;
+
+  inserts: number;
+  queries: number;
+  updates: number;
+  deletes: number;
+  commands: number;
+
+  bytesIn: number;
+  bytesOut: number;
+  numRequests: number;
+
+  cacheBytes: number;
+  cacheDirtyBytes: number;
+}
+
+export interface MongoCollectionStats {
+  name: string;
+  count: number;
+  size: number;
+  storageSize: number;
+  avgObjSize: number;
+  totalIndexSize: number;
+  indexes: number;
+}
+
+export interface MongoIndexStat {
+  collection: string;
+  name: string;
+  key: string;
+  accessesOps: number;
+  since: string;  // ISO date
+  isTtl: boolean;
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/api/",
   prepareHeaders: (headers, { getState }) => {
@@ -191,14 +240,36 @@ export const api = createApi({
     }),
   }
 ),
-deleteOrders: build.mutation<number, string[]>({
-      query: (orderIds) => ({
-        url: "Order/Admin/orders",
-        method: "DELETE",
-        body: orderIds, 
+    deleteOrders: build.mutation<number, string[]>({
+          query: (orderIds) => ({
+            url: "Order/Admin/orders",
+            method: "DELETE",
+            body: orderIds, 
+          }),
+        }),
+    getMongoOverview: build.query<MongoOverview, void>({
+      query: () => ({ url: "Admin/overview", method: "GET" }),
+    }),
+
+    getMongoServerMetrics: build.query<MongoServerMetrics, void>({
+      query: () => ({ url: "Admin/server", method: "GET" }),
+    }),
+
+    getMongoCollectionStats: build.query<MongoCollectionStats, string>({
+      query: (name) => ({
+        url: `Admin/collection/${name}`,
+        method: "GET",
+      }),
+    }),
+
+    getMongoIndexStats: build.query<MongoIndexStat[], string>({
+      query: (collection) => ({
+        url: `Admin/collection/${collection}/indexes`,
+        method: "GET",
       }),
     }),
   }),
+    
 });
 
 export const {
@@ -216,5 +287,9 @@ export const {
   useUpdateUserProfileMutation,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
-  useDeleteOrdersMutation
+  useDeleteOrdersMutation,
+  useGetMongoOverviewQuery,
+  useGetMongoServerMetricsQuery,
+  useGetMongoCollectionStatsQuery,
+  useGetMongoIndexStatsQuery,
 } = api;
