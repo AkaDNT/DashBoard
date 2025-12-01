@@ -3,12 +3,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "./store";
 import { setJwtToken } from "./slices/authSlice";
 
-export interface User {
-  id?: number;
-  username: string;
-  email: string;
-}
-
 interface TotalUsersResponse {
   totalUsers: number;
 }
@@ -128,6 +122,52 @@ export interface MongoIndexStat {
   since: string;  // ISO date
   isTtl: boolean;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  isAdmin: boolean;
+  isEmailVerified: boolean;
+}
+
+export interface PagedUsersResponse {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  data: User[];
+}
+
+export interface AdminUserOverview {
+  id: number;
+  email: string;
+  username: string;
+  isAdmin: boolean;
+  isEmailVerified: boolean;
+
+  name: string;
+  avatar: string;
+  phoneNumber: string;
+  gender: string;
+  birthday: string;
+
+  cartItemCount: number;
+  wishlistCount: number;
+  totalOrders: number;
+  notConfirmOrders: number;
+  pendingOrders: number;
+  processingOrders: number;
+  shippedOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
+  confirmedOrders: number;    
+  totalSpent: number;
+  firstOrderAt: string;
+  lastOrderAt: string;
+}
+
+
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/api/",
@@ -268,6 +308,44 @@ export const api = createApi({
         method: "GET",
       }),
     }),
+
+    getAdminUsers: build.query<
+  PagedUsersResponse,
+  { page: number; pageSize: number; keyword?: string }
+>({
+  query: ({ page, pageSize, keyword }) => ({
+    url: "Admin/users",
+    method: "GET",
+    params: {
+      page,
+      pageSize,
+      ...(keyword ? { keyword } : {}),
+    },
+  }),
+}),
+    getAdminUserOverview: build.query<AdminUserOverview, number>({
+  query: (id) => ({
+    url: `Admin/users/${id}/overview`,
+    method: "GET",
+  }),
+}),
+
+    deleteAdminUsers: build.mutation<number, number[]>({
+  query: (userIds) => ({
+    url: "Admin/users",
+    method: "DELETE",
+    body: userIds, 
+  }),
+}),
+    updateUserRole: build.mutation<void, { id: number; isAdmin: boolean }>({
+      query: ({ id, isAdmin }) => ({
+        url: `Admin/users/${id}/role`,
+        method: "PUT",
+        body: { isAdmin }, 
+      }),
+    }),
+
+
   }),
     
 });
@@ -292,4 +370,8 @@ export const {
   useGetMongoServerMetricsQuery,
   useGetMongoCollectionStatsQuery,
   useGetMongoIndexStatsQuery,
+  useGetAdminUsersQuery,
+  useGetAdminUserOverviewQuery,
+  useDeleteAdminUsersMutation,
+  useUpdateUserRoleMutation,
 } = api;

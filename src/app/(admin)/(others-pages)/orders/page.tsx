@@ -18,7 +18,7 @@ import {
 } from "@/lib/api";
 import { Modal } from "@/components/ui/modal";
 import { useRouter } from "next/navigation";
-import Alert from "@/components/ui/alert/Alert"; // 👈 THÊM
+import Alert from "@/components/ui/alert/Alert"; 
 import Image from "next/image";
 
 type OrderStatus =
@@ -26,7 +26,9 @@ type OrderStatus =
   | "Pending"
   | "Cancelled"
   | "NotConfirm"
+  | "Confirmed"  
   | string;
+
 
 interface OrderRow {
   orderID: string;
@@ -485,20 +487,20 @@ const OrdersPage: React.FC = () => {
 
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                         <Badge
-                          size="sm"
-                          color={
-                            order.status === "Delivered"
-                              ? "success"
-                              : order.status === "Pending" ||
-                                order.status === "NotConfirm"
-                              ? "warning"
-                              : "error"
-                          }
-                        >
-                          {order.status === "NotConfirm"
-                            ? "Not confirmed"
-                            : order.status}
-                        </Badge>
+  size="sm"
+  color={
+    order.status === "Delivered" || order.status === "Confirmed"
+      ? "success"
+      : order.status === "Pending" || order.status === "NotConfirm"
+      ? "warning"
+      : "error"
+  }
+>
+  {order.status === "NotConfirm"
+    ? "Not confirmed"
+    : order.status}
+</Badge>
+
                       </TableCell>
                     </TableRow>
                   ))}
@@ -630,6 +632,7 @@ const OrdersPage: React.FC = () => {
                       <option value="Delivered">Delivered</option>
                       <option value="Cancelled">Cancelled</option>
                       <option value="NotConfirm">NotConfirm</option>
+                      <option value="Confirmed">Confirmed</option>
                     </select>
                   </div>
                 </section>
