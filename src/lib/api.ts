@@ -269,6 +269,28 @@ export interface UpdateAdminProductRequest {
   sale?: AdminProductSaleInfo;
 }
 
+export interface SaleEvent {
+  id: string;
+  title: string;
+  color: "Danger" | "Success" | "Primary" | "Warning";
+  startDate: string;  // ISO
+  endDate: string;    // ISO
+  percent: number;    // 0–1 (0.2 = 20%)
+  productIds: string[];
+}
+
+export interface CreateSaleEventRequest {
+  title: string;
+  color: "Danger" | "Success" | "Primary" | "Warning";
+  startDate: string;  // ISO
+  endDate: string;    // ISO
+  percent: number;    // 0–1
+  productIds: string[];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateSaleEventRequest extends CreateSaleEventRequest {}
+
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: "/api/",
@@ -539,8 +561,39 @@ export const api = createApi({
       }),
     }),
 
+    getSaleEvents: build.query<SaleEvent[], void>({
+  query: () => ({
+    url: "Admin/sales-events",
+    method: "GET",
+  }),
+}),
 
+createSaleEvent: build.mutation<SaleEvent, CreateSaleEventRequest>({
+  query: (body) => ({
+    url: "Admin/sales-events",
+    method: "POST",
+    body,
+  }),
+}),
 
+updateSaleEvent: build.mutation<
+  void,
+  { id: string; data: UpdateSaleEventRequest }
+>({
+  query: ({ id, data }) => ({
+    url: `Admin/sales-events/${id}`,
+    method: "PUT",
+    body: data,
+  }),
+}),
+
+deleteSaleEvents: build.mutation<void, string[]>({
+  query: (ids) => ({
+    url: "Admin/sales-events",
+    method: "DELETE",
+    body: ids,
+  }),
+}),
 
   }),
     
@@ -580,4 +633,8 @@ export const {
   useUpdateProductSaleMutation,
   useGetActiveSaleProductsQuery,
   useApplyRandomSalesMutation,
+  useGetSaleEventsQuery,
+  useCreateSaleEventMutation,
+  useUpdateSaleEventMutation,
+  useDeleteSaleEventsMutation,
 } = api;
