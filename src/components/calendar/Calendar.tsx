@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import {
   EventInput,
@@ -20,9 +19,7 @@ interface CalendarEvent extends EventInput {
 }
 
 const Calendar: React.FC = () => {
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null
-  );
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [eventTitle, setEventTitle] = useState("");
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
@@ -76,7 +73,7 @@ const Calendar: React.FC = () => {
     setEventTitle(event.title);
     setEventStartDate(event.start?.toISOString().split("T")[0] || "");
     setEventEndDate(event.end?.toISOString().split("T")[0] || "");
-    setEventLevel(event.extendedProps.calendar);
+    setEventLevel((event.extendedProps as any).calendar);
     openModal();
   };
 
@@ -125,12 +122,15 @@ const Calendar: React.FC = () => {
       <div className="custom-calendar">
         <FullCalendar
           ref={calendarRef}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          plugins={[
+            dayGridPlugin,
+            interactionPlugin, 
+          ]}
           initialView="dayGridMonth"
           headerToolbar={{
             left: "prev,next addEventButton",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            right: "dayGridMonth",
           }}
           events={events}
           selectable={true}
@@ -203,7 +203,7 @@ const Calendar: React.FC = () => {
                             <span
                               className={`h-2 w-2 rounded-full bg-white ${
                                 eventLevel === key ? "block" : "hidden"
-                              }`}  
+                              }`}
                             ></span>
                           </span>
                         </span>
@@ -249,7 +249,7 @@ const Calendar: React.FC = () => {
             <button
               onClick={closeModal}
               type="button"
-              className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
+              className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg:white/[0.03] sm:w-auto"
             >
               Close
             </button>
@@ -268,7 +268,9 @@ const Calendar: React.FC = () => {
 };
 
 const renderEventContent = (eventInfo: EventContentArg) => {
-  const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
+  const colorClass = `fc-bg-${String(
+    (eventInfo.event.extendedProps as any).calendar
+  ).toLowerCase()}`;
   return (
     <div
       className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm`}

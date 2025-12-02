@@ -18,7 +18,7 @@ import {
 } from "@/lib/api";
 import { Modal } from "@/components/ui/modal";
 import { useRouter } from "next/navigation";
-import Alert from "@/components/ui/alert/Alert"; 
+import Alert from "@/components/ui/alert/Alert"; // 👈 THÊM
 import Image from "next/image";
 
 type OrderStatus =
@@ -26,7 +26,7 @@ type OrderStatus =
   | "Pending"
   | "Cancelled"
   | "NotConfirm"
-  | "Confirmed"  
+  | "Confirmed"   
   | string;
 
 
@@ -487,19 +487,19 @@ const OrdersPage: React.FC = () => {
 
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                         <Badge
-  size="sm"
-  color={
-    order.status === "Delivered" || order.status === "Confirmed"
-      ? "success"
-      : order.status === "Pending" || order.status === "NotConfirm"
-      ? "warning"
-      : "error"
-  }
->
-  {order.status === "NotConfirm"
-    ? "Not confirmed"
-    : order.status}
-</Badge>
+                        size="sm"
+                        color={
+                          order.status === "Delivered" || order.status === "Confirmed"
+                            ? "success"
+                            : order.status === "Pending" || order.status === "NotConfirm"
+                            ? "warning"
+                            : "error"
+                        }
+                      >
+                        {order.status === "NotConfirm"
+                          ? "Not confirmed"
+                          : order.status}
+                      </Badge>
 
                       </TableCell>
                     </TableRow>
@@ -691,17 +691,22 @@ const OrdersPage: React.FC = () => {
                         {selectedOrder.items.map((item) => (
                           <tr key={item.productID}>
                             <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3">
+                              <div className="relative h-10 w-10 flex-shrink-0">
                                 <Image
                                   src={item.image}
                                   alt={item.productName}
-                                  className="h-10 w-10 flex-shrink-0 rounded-lg object-cover"
+                                  fill
+                                  className="rounded-lg object-cover"
+                                  sizes="40px"
                                 />
-                                <span className="font-medium text-gray-800 dark:text-gray-100">
-                                  {item.productName}
-                                </span>
                               </div>
-                            </td>
+                              <span className="font-medium text-gray-800 dark:text-gray-100">
+                                {item.productName}
+                              </span>
+                            </div>
+                          </td>
+
                             <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                               {item.quantity}
                             </td>

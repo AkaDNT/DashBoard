@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import Badge from "../ui/badge/Badge";
-import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
+import {  BoxIconLine, GroupIcon } from "@/icons";
 import { useGetTotalUsersQuery, useGetTotalOrdersQuery } from "@/lib/api";
 
 export const EcommerceMetrics = () => {
@@ -39,10 +38,6 @@ export const EcommerceMetrics = () => {
               {displayTotalUsers.toLocaleString("vi-VN")}
             </h4>
           </div>
-          <Badge color="success">
-            <ArrowUpIcon />
-            11.01%
-          </Badge>
         </div>
       </div>
 
@@ -59,11 +54,6 @@ export const EcommerceMetrics = () => {
               {displayTotalOrders.toLocaleString("vi-VN")}
             </h4>
           </div>
-
-          <Badge color="error">
-            <ArrowDownIcon className="text-error-500" />
-            9.05%
-          </Badge>
         </div>
       </div>
     </div>

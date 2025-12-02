@@ -167,6 +167,107 @@ export interface AdminUserOverview {
   lastOrderAt: string;
 }
 
+export interface CreateUserRequest {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface AdminProductListItem {
+  productId: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  sold: number;
+  ratingAverage: number;
+  isOnSale: boolean;
+  salePercent: number | null;
+  imageURL: string[];
+}
+
+export interface PagedProductsResponse {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  data: AdminProductListItem[];
+}
+
+export interface AdminProductOverview {
+  productId: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  color: string[];
+  stock: number;
+  sold: number;
+
+  ratingAverage: number;
+  rating1: number;
+  rating2: number;
+  rating3: number;
+  rating4: number;
+  rating5: number;
+
+  isOnSale: boolean;
+  salePercent: number | null;
+  saleStart: string | null;
+  saleEnd: string | null;
+  imageURL: string[];
+
+  totalOrders: number;
+  totalQuantityOrdered: number;
+  totalRevenue: number;
+
+  notConfirmOrders: number;
+  pendingOrders: number;
+  confirmedOrders: number;
+  processingOrders: number;
+  shippedOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
+}
+
+export interface AdminProductStats {
+  totalProducts: number;
+  totalCategories: number;
+  totalStock: number;
+  totalSold: number;
+}
+
+export interface AdminProductSaleInfo {
+  percent: number;      // 0.1 = 10%
+  startDate: string;    // ISO
+  endDate: string;      // ISO
+  isActive: boolean;
+}
+
+export interface CreateAdminProductRequest {
+  name: string;
+  description?: string;
+  price: number;
+  color?: string[];
+  imageURL?: string[];
+  detail?: Record<string, string>;
+  category: string;
+  stock: number;
+  sale?: AdminProductSaleInfo;
+}
+
+export interface UpdateAdminProductRequest {
+  name: string;
+  description?: string;
+  price: number;
+  color?: string[];
+  imageURL?: string[];
+  detail?: Record<string, string>;
+  category: string;
+  stock: number;
+  sale?: AdminProductSaleInfo;
+}
 
 
 const rawBaseQuery = fetchBaseQuery({
@@ -344,6 +445,101 @@ export const api = createApi({
         body: { isAdmin }, 
       }),
     }),
+    createUser: build.mutation<void, CreateUserRequest>({
+  query: (body) => ({
+    url: "User",              
+    method: "POST",
+    body,
+  }),
+}),
+
+    getAdminProducts: build.query<
+      PagedProductsResponse,
+      { page: number; pageSize: number; keyword?: string; category?: string }
+    >({
+      query: ({ page, pageSize, keyword, category }) => ({
+        url: "Admin/products",
+        method: "GET",
+        params: {
+          page,
+          pageSize,
+          ...(keyword ? { keyword } : {}),
+          ...(category ? { category } : {}),
+        },
+      }),
+    }),
+
+    getAdminProductOverview: build.query<AdminProductOverview, string>({
+      query: (id) => ({
+        url: `Admin/products/${id}/overview`,
+        method: "GET",
+      }),
+    }),
+
+    getAdminProductStats: build.query<AdminProductStats, void>({
+      query: () => ({
+        url: "Admin/products/statistics",
+        method: "GET",
+      }),
+    }),
+
+    createAdminProduct: build.mutation<
+      AdminProductOverview,
+      CreateAdminProductRequest
+    >({
+      query: (body) => ({
+        url: "Admin/products",
+        method: "POST",
+        body,
+      }),
+    }),
+
+    updateAdminProduct: build.mutation<
+      AdminProductOverview,
+      { id: string; data: UpdateAdminProductRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `Admin/products/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
+    deleteAdminProducts: build.mutation<number, string[]>({
+      query: (productIds) => ({
+        url: "Admin/products",
+        method: "DELETE",
+        body: productIds,
+      }),
+    }),
+
+    updateProductSale: build.mutation<
+      void,
+      { id: string; sale: AdminProductSaleInfo }
+    >({
+      query: ({ id, sale }) => ({
+        url: `Admin/products/${id}/sale`,
+        method: "PUT",
+        body: sale,
+      }),
+    }),
+
+    getActiveSaleProducts: build.query<AdminProductOverview[], void>({
+      query: () => ({
+        url: "Admin/products/active-sales",
+        method: "GET",
+      }),
+    }),
+
+    applyRandomSales: build.mutation<void, { numberOfProducts: number }>({
+      query: ({ numberOfProducts }) => ({
+        url: "Admin/products/random-sales",
+        method: "POST",
+        params: { numberOfProducts },
+      }),
+    }),
+
+
 
 
   }),
@@ -374,4 +570,14 @@ export const {
   useGetAdminUserOverviewQuery,
   useDeleteAdminUsersMutation,
   useUpdateUserRoleMutation,
+  useCreateUserMutation,
+  useGetAdminProductsQuery,
+  useGetAdminProductOverviewQuery,
+  useGetAdminProductStatsQuery,
+  useCreateAdminProductMutation,
+  useUpdateAdminProductMutation,
+  useDeleteAdminProductsMutation,
+  useUpdateProductSaleMutation,
+  useGetActiveSaleProductsQuery,
+  useApplyRandomSalesMutation,
 } = api;
