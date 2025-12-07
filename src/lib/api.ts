@@ -288,6 +288,52 @@ export interface CreateSaleEventRequest {
   productIds: string[];
 }
 
+export interface AdminDailyOrderStat {
+  date: string;            // ISO string
+  totalOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
+  revenue: number;
+}
+
+export interface AdminOrderStatusDistribution {
+  status: string;
+  count: number;
+}
+
+export interface AdminPaymentMethodStat {
+  paymentMethod: string;
+  ordersCount: number;
+  revenue: number;
+}
+
+export interface AdminProductCategoryStat {
+  category: string;
+  productsCount: number;
+  totalStock: number;
+  totalSold: number;
+}
+
+export interface AdminRatingDistribution {
+  ratingValue: number;   // 1–5
+  count: number;
+}
+
+export interface AdminGenderDistribution {
+  gender: string;
+  count: number;
+}
+
+export interface AdminAgeBucket {
+  range: string; // "18–24", "25–34"...
+  count: number;
+}
+
+export interface AdminDemographics {
+  gender: AdminGenderDistribution[];
+  age: AdminAgeBucket[];
+}
+
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateSaleEventRequest extends CreateSaleEventRequest {}
 
@@ -595,6 +641,52 @@ deleteSaleEvents: build.mutation<void, string[]>({
   }),
 }),
 
+getDailyOrderStats: build.query<AdminDailyOrderStat[], { days?: number } | void>({
+      query: (args) => {
+        const days = args?.days ?? 30;
+        return {
+          url: "Admin/orders/daily-stats",
+          method: "GET",
+          params: { days },
+        };
+      },
+    }),
+
+    getOrderStatusDistribution: build.query<AdminOrderStatusDistribution[], void>({
+      query: () => ({
+        url: "Admin/orders/status-distribution",
+        method: "GET",
+      }),
+    }),
+
+    getPaymentMethodStats: build.query<AdminPaymentMethodStat[], void>({
+      query: () => ({
+        url: "Admin/orders/payment-methods",
+        method: "GET",
+      }),
+    }),
+
+    getProductCategoryStats: build.query<AdminProductCategoryStat[], void>({
+      query: () => ({
+        url: "Admin/products/category-stats",
+        method: "GET",
+      }),
+    }),
+
+    getRatingDistribution: build.query<AdminRatingDistribution[], void>({
+      query: () => ({
+        url: "Admin/products/rating-distribution",
+        method: "GET",
+      }),
+    }),
+
+    getUserDemographics: build.query<AdminDemographics, void>({
+      query: () => ({
+        url: "Admin/users/demographics",
+        method: "GET",
+      }),
+    }),
+
   }),
     
 });
@@ -637,4 +729,10 @@ export const {
   useCreateSaleEventMutation,
   useUpdateSaleEventMutation,
   useDeleteSaleEventsMutation,
+  useGetDailyOrderStatsQuery,
+  useGetOrderStatusDistributionQuery,
+  useGetPaymentMethodStatsQuery,
+  useGetProductCategoryStatsQuery,
+  useGetRatingDistributionQuery,
+  useGetUserDemographicsQuery,
 } = api;
