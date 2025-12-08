@@ -18,18 +18,19 @@ export default function OrdersDailyChart() {
   });
 
   const categories = data.map((d) =>
-    new Intl.DateTimeFormat("vi-VN", { month: "2-digit", day: "2-digit" }).format(
-      new Date(d.date)
-    )
+    new Intl.DateTimeFormat("vi-VN", {
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date(d.date))
   );
 
   const series = [
     {
-      name: "Orders",
+      name: "Đơn hàng",
       data: data.map((d) => d.totalOrders),
     },
     {
-      name: "Revenue",
+      name: "Doanh thu",
       data: data.map((d) => d.revenue),
     },
   ];
@@ -55,7 +56,7 @@ export default function OrdersDailyChart() {
     },
     yaxis: [
       {
-        seriesName: "Orders",
+        seriesName: "Đơn hàng",
         labels: {
           style: { fontSize: "11px" },
           formatter: (val) => val.toFixed(0),
@@ -63,10 +64,10 @@ export default function OrdersDailyChart() {
       },
       {
         opposite: true,
-        seriesName: "Revenue",
+        seriesName: "Doanh thu",
         labels: {
           style: { fontSize: "11px" },
-          formatter: (val) => `${(val / 1_000_000).toFixed(1)}M`,
+          formatter: (val) => `${(val / 1_000_000).toFixed(1)} triệu`,
         },
       },
     ],
@@ -76,7 +77,7 @@ export default function OrdersDailyChart() {
       y: [
         {
           formatter: (val?: number) =>
-            val != null ? `${val.toFixed(0)} orders` : "",
+            val != null ? `${val.toFixed(0)} đơn hàng` : "",
         },
         {
           formatter: (val?: number) =>
@@ -104,7 +105,7 @@ export default function OrdersDailyChart() {
   if (isLoading) {
     return (
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading daily orders...
+        Đang tải dữ liệu đơn hàng theo ngày...
       </div>
     );
   }
@@ -112,7 +113,7 @@ export default function OrdersDailyChart() {
   if (isError) {
     return (
       <div className="overflow-hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load daily orders.
+        Không thể tải dữ liệu đơn hàng theo ngày.
       </div>
     );
   }
@@ -122,10 +123,10 @@ export default function OrdersDailyChart() {
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Orders & Revenue (Daily)
+            Đơn hàng & doanh thu (theo ngày)
           </h3>
           <p className="mt-1 text-xs text-gray-400">
-            Last {range} days
+            Trong {range} ngày gần đây
           </p>
         </div>
 
@@ -140,7 +141,7 @@ export default function OrdersDailyChart() {
                   : "text-gray-500 dark:text-gray-400"
               }`}
             >
-              {r}d
+              {r} ngày
             </button>
           ))}
         </div>

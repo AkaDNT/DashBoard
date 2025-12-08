@@ -9,7 +9,11 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 function formatCurrency(value: number) {
-  return "$" + Math.round(value).toLocaleString("en-US");
+  return Math.round(value).toLocaleString("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  });
 }
 
 function getMonthKey(dateStr: string) {
@@ -21,10 +25,13 @@ export default function MonthlyTarget() {
   const { data: orders = [], isLoading, isError } = useGetOrdersQuery();
 
   const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
 
-  const currentMonthValue = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}`;
+  const currentMonthValue = `${currentYear}-${String(currentMonth).padStart(
+    2,
+    "0"
+  )}`;
 
   const fiveYearsAgo = new Date(now.getFullYear() - 5, now.getMonth(), 1);
   const minMonthValue = `${fiveYearsAgo.getFullYear()}-${String(
@@ -33,10 +40,13 @@ export default function MonthlyTarget() {
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonthValue);
 
-  const selectedMonthLabel = new Date(
-    Number(selectedMonth.split("-")[0]),
-    Number(selectedMonth.split("-")[1]) - 1
-  ).toLocaleString("en-US", { month: "short", year: "numeric" });
+  // Tách selectedMonth -> năm / tháng số
+  const [selectedYearStr, selectedMonthStr] = selectedMonth.split("-");
+  const selectedYearNum = Number(selectedYearStr);
+  const selectedMonthNum = Number(selectedMonthStr);
+
+  // Label hiển thị dạng MM/YYYY (không phụ thuộc locale)
+  const selectedMonthLabel = `${selectedMonthStr}/${selectedYearStr}`;
 
   const deliveredOrders = orders.filter((o) => o.status === "Delivered");
 
@@ -44,11 +54,7 @@ export default function MonthlyTarget() {
     .filter((o) => getMonthKey(o.createdAt) === selectedMonth)
     .reduce((sum, o) => sum + o.totalAmount, 0);
 
-  const selectedDate = new Date(
-    Number(selectedMonth.split("-")[0]),
-    Number(selectedMonth.split("-")[1]) - 1,
-    1
-  );
+  const selectedDate = new Date(selectedYearNum, selectedMonthNum - 1, 1);
   const prevMonthDate = new Date(
     selectedDate.getFullYear(),
     selectedDate.getMonth() - 1,
@@ -74,11 +80,8 @@ export default function MonthlyTarget() {
   }
 
   const displayPercent = Math.abs(percentChange);
-
-  // 1 chữ số thập phân cho câu mô tả
   const percentLabel = `${displayPercent.toFixed(1)}%`;
 
-  // 2 chữ số thập phân cho số ở giữa chart (giống badgeText nhưng 2 decimal)
   const sign = diffRevenue > 0 ? "+" : diffRevenue < 0 ? "-" : "";
   const centerText = `${sign}${displayPercent.toFixed(2)}%`;
 
@@ -87,22 +90,17 @@ export default function MonthlyTarget() {
 
   let changeSentence: string;
   if (lastMonthRevenue === 0 && selectedMonthRevenue === 0) {
-    changeSentence = "equal to the same period last month.";
+    changeSentence = "bằng cùng kỳ tháng trước.";
   } else if (diffRevenue > 0) {
-    changeSentence = `up ${percentLabel} vs the same period last month.`;
+    changeSentence = `tăng ${percentLabel} so với cùng kỳ tháng trước.`;
   } else if (diffRevenue < 0) {
-    changeSentence = `down ${percentLabel} vs the same period last month.`;
+    changeSentence = `giảm ${percentLabel} so với cùng kỳ tháng trước.`;
   } else {
-    changeSentence = "equal to the same period last month.";
+    changeSentence = "bằng cùng kỳ tháng trước.";
   }
 
-  // Màu số ở giữa chart (tương tự badgeText: tăng xanh, giảm đỏ, bằng xám)
   const valueColor =
-    diffRevenue > 0
-      ? "#16a34a" // gần giống text-success-600
-      : diffRevenue < 0
-      ? "#dc2626" // gần giống text-red-600
-      : "#1D2939"; // mặc định giống màu cũ
+    diffRevenue > 0 ? "#16a34a" : diffRevenue < 0 ? "#dc2626" : "#1D2939";
 
   const options: ApexOptions = {
     colors: ["#465FFF"],
@@ -133,11 +131,8 @@ export default function MonthlyTarget() {
           value: {
             fontSize: "36px",
             fontWeight: "600",
-            // giữ nguyên vị trí như code gốc
             offsetY: -40,
-            // đổi màu theo tăng/giảm/bằng
             color: valueColor,
-            // hiển thị dạng +12.34%, -05.67%, 0.00%
             formatter: () => centerText,
           },
         },
@@ -150,23 +145,37 @@ export default function MonthlyTarget() {
     stroke: {
       lineCap: "round",
     },
-    labels: ["Progress"],
+    labels: ["Tiến độ"],
   };
 
-  function handleMonthChange(e: any) {
-    const value = e.target.value as string;
-    if (!value) return;
-
+  // Hàm update selectedMonth từ năm + tháng, vẫn check min/max như cũ
+  function updateSelectedMonth(year: number, month: number) {
+    const value = `${year}-${String(month).padStart(2, "0")}`;
     if (value > currentMonthValue) return;
     if (value < minMonthValue) return;
-
     setSelectedMonth(value);
+  }
+
+  function handleYearChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const newYear = Number(e.target.value);
+    updateSelectedMonth(newYear, selectedMonthNum);
+  }
+
+  function handleMonthNumberChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const newMonth = Number(e.target.value);
+    updateSelectedMonth(selectedYearNum, newMonth);
+  }
+
+  // Tạo danh sách năm (5 năm gần nhất đến hiện tại)
+  const yearOptions: number[] = [];
+  for (let y = fiveYearsAgo.getFullYear(); y <= currentYear; y++) {
+    yearOptions.push(y);
   }
 
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-gray-100 p-6 text-sm text-gray-500">
-        Loading monthly revenue...
+        Đang tải dữ liệu doanh thu theo tháng...
       </div>
     );
   }
@@ -174,7 +183,7 @@ export default function MonthlyTarget() {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-500">
-        Failed to load orders data.
+        Không thể tải dữ liệu đơn hàng.
       </div>
     );
   }
@@ -185,27 +194,46 @@ export default function MonthlyTarget() {
         <div className="flex justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Monthly Revenue Comparison
+              So sánh doanh thu theo tháng
             </h3>
             <p className="mt-1 text-theme-sm font-normal text-gray-500 dark:text-gray-400">
-              This month vs same period last month (Delivered orders only)
+              Tháng này so với cùng kỳ tháng trước (chỉ đơn đã giao)
             </p>
           </div>
 
           <div className="flex flex-col items-end gap-1">
             <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
-              Month
+              Tháng / Năm
             </span>
-            <input
-              type="month"
-              value={selectedMonth}
-              min={minMonthValue}
-              max={currentMonthValue}
-              onChange={handleMonthChange}
-              className="h-9 rounded-lg border border-gray-300 bg-white px-3 text-xs font-medium text-gray-700 shadow-theme-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-            />
+            <div className="flex items-center gap-2">
+              {/* chọn tháng dạng số 1–12 */}
+              <select
+                value={selectedMonthNum}
+                onChange={handleMonthNumberChange}
+                className="h-9 rounded-lg border border-gray-300 bg-white px-2 text-xs font-medium text-gray-700 shadow-theme-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                  <option key={m} value={m}>
+                    {m.toString().padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+
+              {/* chọn năm dạng số */}
+              <select
+                value={selectedYearNum}
+                onChange={handleYearChange}
+                className="h-9 rounded-lg border border-gray-300 bg-white px-2 text-xs font-medium text-gray-700 shadow-theme-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              >
+                {yearOptions.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
             <span className="text-[10px] text-gray-400">
-              Format: YYYY-MM (last 5 years)
+              Trong khoảng 5 năm gần nhất
             </span>
           </div>
         </div>
@@ -222,7 +250,7 @@ export default function MonthlyTarget() {
         </div>
 
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          MTD of {selectedMonthLabel} is{" "}
+          Doanh thu lũy kế của {selectedMonthLabel} là{" "}
           {formatCurrency(selectedMonthRevenue)}, {changeSentence}
         </p>
       </div>
@@ -230,7 +258,7 @@ export default function MonthlyTarget() {
       <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
         <div>
           <p className="mb-1 text-center text-theme-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-            This Month
+            Tháng này
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             {formatCurrency(selectedMonthRevenue)}
@@ -241,7 +269,7 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-theme-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-            Last Month
+            Tháng trước
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             {formatCurrency(lastMonthRevenue)}
@@ -252,7 +280,7 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-theme-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-            Difference
+            Chênh lệch
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
             {diffRevenue > 0 ? "+" : diffRevenue < 0 ? "-" : ""}

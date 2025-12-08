@@ -14,7 +14,7 @@ export default function PaymentMethodChart() {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading payment stats...
+        Đang tải thống kê thanh toán...
       </div>
     );
   }
@@ -22,7 +22,7 @@ export default function PaymentMethodChart() {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load payment stats.
+        Không thể tải thống kê thanh toán.
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function PaymentMethodChart() {
         formatter: (val: number) => {
           const percent =
             total > 0 ? ((val / total) * 100).toFixed(1) + "%" : "";
-          return `${val} orders (${percent})`;
+          return `${val} đơn hàng (${percent})`;
         },
       },
     },
@@ -57,15 +57,15 @@ export default function PaymentMethodChart() {
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Payment Methods
+          Phương thức thanh toán
         </h3>
         <span className="text-xs text-gray-400">
-          {total.toLocaleString("vi-VN")} orders
+          {total.toLocaleString("vi-VN")} đơn hàng
         </span>
       </div>
 
       {series.length === 0 ? (
-        <p className="text-sm text-gray-400">No data.</p>
+        <p className="text-sm text-gray-400">Không có dữ liệu.</p>
       ) : (
         <ReactApexChart
           options={options}

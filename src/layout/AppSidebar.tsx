@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState,useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,6 @@ import {
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  MailIcon,
   PageIcon,
   TableIcon,
   TaskIcon,
@@ -27,47 +26,47 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
+    name: "Tổng quan",
     path: "/",
   },
   {
     icon: <CalenderIcon />,
-    name: "Calendar",
+    name: "Lịch",
     path: "/calendar",
   },
   {
     icon: <UserCircleIcon />,
-    name: "Your Profile",
+    name: "Hồ sơ của bạn",
     path: "/profile",
   },
   {
     icon: <TaskIcon />,
-    name: "Users",
+    name: "Người dùng",
     path: "/users",
   },
   {
-    icon: <ListIcon/>,
-    name: "Products",
+    icon: <ListIcon />,
+    name: "Sản phẩm",
     path: "/products",
   },
   {
-    name: "Orders",
+    name: "Đơn hàng",
     icon: <TableIcon />,
-    path: "/orders"
+    path: "/orders",
   },
   {
-    name: "Server Health",
+    name: "Tình trạng server",
     icon: <PageIcon />,
-    path: "/server-health"
+    path: "/server-health",
   },
 ];
 
 const othersItems: NavItem[] = [
-  {
-    icon: <MailIcon />,
-    name: "Email",
-    path: "/email"
-  },
+  // {
+  //   icon: <MailIcon />,
+  //   name: "Email",
+  //   path: "/email",
+  // },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -174,7 +173,7 @@ const AppSidebar: React.FC = () => {
                                 : "menu-dropdown-badge-inactive"
                             } menu-dropdown-badge `}
                           >
-                            new
+                            Mới
                           </span>
                         )}
                         {subItem.pro && (
@@ -185,7 +184,7 @@ const AppSidebar: React.FC = () => {
                                 : "menu-dropdown-badge-inactive"
                             } menu-dropdown-badge `}
                           >
-                            pro
+                            Pro
                           </span>
                         )}
                       </span>
@@ -209,11 +208,10 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => path === pathname;
-   const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback((path: string) => path === pathname, [pathname]);
 
   useEffect(() => {
-    // Check if the current path matches any submenu item
+    // Kiểm tra xem path hiện tại có khớp submenu nào không
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
       const items = menuType === "main" ? navItems : othersItems;
@@ -232,14 +230,14 @@ const AppSidebar: React.FC = () => {
       });
     });
 
-    // If no submenu item matches, close the open submenu
+    // Nếu không submenu nào khớp thì đóng submenu đang mở
     if (!submenuMatched) {
       setOpenSubmenu(null);
     }
-  }, [pathname,isActive]);
+  }, [pathname, isActive]);
 
   useEffect(() => {
-    // Set the height of the submenu items when the submenu is opened
+    // Set chiều cao submenu khi submenu được mở
     if (openSubmenu !== null) {
       const key = `${openSubmenu.type}-${openSubmenu.index}`;
       if (subMenuRefs.current[key]) {
@@ -279,7 +277,7 @@ const AppSidebar: React.FC = () => {
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-            <div
+      <div
         className={`py-8 flex  ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
@@ -328,7 +326,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
+                  "Danh mục"
                 ) : (
                   <HorizontaLDots />
                 )}
@@ -336,22 +334,6 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div>
           </div>
         </nav>
       </div>

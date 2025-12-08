@@ -37,13 +37,14 @@ export default function MongoDashboardPage() {
   const repliesStats = useGetMongoCollectionStatsQuery("Replies");
   const reviewsStats = useGetMongoCollectionStatsQuery("Reviews");
   const userDetailStats = useGetMongoCollectionStatsQuery("UserDetail");
+
   const cartsIdx = useGetMongoIndexStatsQuery("Carts");
-const categoryIdx = useGetMongoIndexStatsQuery("Category");
-const orderIdx = useGetMongoIndexStatsQuery("Order");
-const productIdx = useGetMongoIndexStatsQuery("Product");
-const repliesIdx = useGetMongoIndexStatsQuery("Replies");
-const reviewsIdx = useGetMongoIndexStatsQuery("Reviews");
-const userDetailIdx = useGetMongoIndexStatsQuery("UserDetail");
+  const categoryIdx = useGetMongoIndexStatsQuery("Category");
+  const orderIdx = useGetMongoIndexStatsQuery("Order");
+  const productIdx = useGetMongoIndexStatsQuery("Product");
+  const repliesIdx = useGetMongoIndexStatsQuery("Replies");
+  const reviewsIdx = useGetMongoIndexStatsQuery("Reviews");
+  const userDetailIdx = useGetMongoIndexStatsQuery("UserDetail");
 
   const collectionRows = [
     { label: "Carts", ...cartsStats },
@@ -84,18 +85,18 @@ const userDetailIdx = useGetMongoIndexStatsQuery("UserDetail");
       </div>
 
       <div className="col-span-12 xl:col-span-7">
-      <MongoIndexHealthCard
-        stats={[
-          { label: "Carts", hook: cartsIdx },
-          { label: "Category", hook: categoryIdx },
-          { label: "Order", hook: orderIdx },
-          { label: "Product", hook: productIdx },
-          { label: "Replies", hook: repliesIdx },
-          { label: "Reviews", hook: reviewsIdx },
-          { label: "UserDetail", hook: userDetailIdx },
-        ]}
-      />
-    </div>
+        <MongoIndexHealthCard
+          stats={[
+            { label: "Carts", hook: cartsIdx },
+            { label: "Category", hook: categoryIdx },
+            { label: "Order", hook: orderIdx },
+            { label: "Product", hook: productIdx },
+            { label: "Replies", hook: repliesIdx },
+            { label: "Reviews", hook: reviewsIdx },
+            { label: "UserDetail", hook: userDetailIdx },
+          ]}
+        />
+      </div>
     </div>
   );
 }
@@ -112,7 +113,7 @@ function MongoOverviewCard({ overview, loading, error }: OverviewProps) {
   if (loading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading MongoDB overview...
+        Đang tải tổng quan MongoDB...
       </div>
     );
   }
@@ -120,7 +121,7 @@ function MongoOverviewCard({ overview, loading, error }: OverviewProps) {
   if (error || !overview) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600 dark:border-red-500/40 dark:bg-red-500/10">
-        Failed to load MongoDB overview.
+        Không thể tải tổng quan MongoDB.
       </div>
     );
   }
@@ -128,32 +129,32 @@ function MongoOverviewCard({ overview, loading, error }: OverviewProps) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-        MongoDB Overview
+        Tổng quan MongoDB
       </h3>
       <p className="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-        Database health and size summary
+        Tóm tắt sức khỏe và kích thước cơ sở dữ liệu
       </p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
         <OverviewStat
-          label="Database"
+          label="Cơ sở dữ liệu"
           value={overview.databaseName}
           muted
         />
         <OverviewStat
-          label="Collections"
+          label="Số collection"
           value={overview.collections.toLocaleString()}
         />
         <OverviewStat
-          label="Documents"
+          label="Số document"
           value={overview.objects.toLocaleString()}
         />
         <OverviewStat
-          label="Data Size"
+          label="Dung lượng dữ liệu"
           value={formatBytes(overview.dataSize)}
         />
         <OverviewStat
-          label="Storage Size"
+          label="Dung lượng lưu trữ"
           value={formatBytes(overview.storageSize)}
         />
         <OverviewStat
@@ -167,16 +168,16 @@ function MongoOverviewCard({ overview, loading, error }: OverviewProps) {
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm dark:border-gray-700/60 dark:bg-white/[0.02]">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-            Connections
+            Kết nối
           </p>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Current:{" "}
+            Hiện tại:{" "}
             <span className="font-semibold text-gray-800 dark:text-white/90">
               {overview.currentConnections}
             </span>
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Available:{" "}
+            Còn trống:{" "}
             <span className="font-semibold text-gray-800 dark:text-white/90">
               {overview.availableConnections}
             </span>
@@ -185,13 +186,13 @@ function MongoOverviewCard({ overview, loading, error }: OverviewProps) {
 
         <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm dark:border-gray-700/60 dark:bg-white/[0.02]">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-            Data vs Index
+            Dữ liệu vs Chỉ mục
           </p>
           <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            Data: {formatBytes(overview.dataSize)}
+            Dữ liệu: {formatBytes(overview.dataSize)}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Index: {formatBytes(overview.indexSize)}
+            Chỉ mục: {formatBytes(overview.indexSize)}
           </p>
 
           {/* simple progress bar */}
@@ -258,7 +259,7 @@ function MongoServerCard({ metrics, loading, error }: ServerProps) {
   if (loading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading server metrics...
+        Đang tải số liệu server...
       </div>
     );
   }
@@ -266,7 +267,7 @@ function MongoServerCard({ metrics, loading, error }: ServerProps) {
   if (error || !metrics) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600 dark:border-red-500/40 dark:bg-red-500/10">
-        Failed to load server metrics.
+        Không thể tải số liệu server.
       </div>
     );
   }
@@ -281,16 +282,17 @@ function MongoServerCard({ metrics, loading, error }: ServerProps) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-        MongoDB Server Metrics
+        Số liệu server MongoDB
       </h3>
       <p className="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-        Connections, operations & cache snapshot
+        Kết nối, thao tác và bộ nhớ đệm (WiredTiger)
       </p>
 
       <div className="mt-5 grid grid-cols-2 gap-4">
+        {/* Kết nối */}
         <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm dark:border-gray-700/60 dark:bg-white/[0.02]">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-            Connections usage
+            Mức sử dụng kết nối
           </p>
           <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
             {metrics.currentConnections}
@@ -305,22 +307,23 @@ function MongoServerCard({ metrics, loading, error }: ServerProps) {
             />
           </div>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            {connectionUsedPercent.toFixed(1)}% in use
+            {connectionUsedPercent.toFixed(1)}% đang được sử dụng
           </p>
         </div>
 
+        {/* WiredTiger cache */}
         <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm dark:border-gray-700/60 dark:bg-white/[0.02]">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-            WiredTiger cache
+            Bộ nhớ đệm WiredTiger
           </p>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            In cache:{" "}
+            Trong bộ nhớ đệm:{" "}
             <span className="font-semibold text-gray-800 dark:text-white/90">
               {formatBytes(metrics.cacheBytes)}
             </span>
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Dirty:{" "}
+            Dữ liệu bẩn (dirty):{" "}
             <span className="font-semibold text-gray-800 dark:text-white/90">
               {formatBytes(metrics.cacheDirtyBytes)}
             </span>
@@ -328,40 +331,42 @@ function MongoServerCard({ metrics, loading, error }: ServerProps) {
         </div>
       </div>
 
+      {/* Thao tác & request */}
       <div className="mt-5 grid grid-cols-3 gap-4 text-sm">
         <ServerStat
-          label="Inserts"
+          label="Thêm (insert)"
           value={metrics.inserts.toLocaleString()}
         />
         <ServerStat
-          label="Queries"
+          label="Truy vấn (query)"
           value={metrics.queries.toLocaleString()}
         />
         <ServerStat
-          label="Updates"
+          label="Cập nhật (update)"
           value={metrics.updates.toLocaleString()}
         />
         <ServerStat
-          label="Deletes"
+          label="Xóa (delete)"
           value={metrics.deletes.toLocaleString()}
         />
         <ServerStat
-          label="Commands"
+          label="Lệnh (command)"
           value={metrics.commands.toLocaleString()}
         />
         <ServerStat
-          label="Requests"
+          label="Yêu cầu (request)"
           value={metrics.numRequests.toLocaleString()}
         />
       </div>
 
+      {/* Bytes in/out */}
       <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
         <ServerStat
-          label="Bytes in"
+          label="Dung lượng vào (bytes in)"
           value={formatBytes(metrics.bytesIn)}
         />
         <ServerStat
-          label="Bytes out"
+          label="Dung lượng ra (bytes out)"
           value={formatBytes(metrics.bytesOut)}
         />
       </div>
@@ -382,6 +387,7 @@ function ServerStat({ label, value }: { label: string; value: string }) {
   );
 }
 
+
 type CollectionsCardProps = {
   rows: {
     label: string;
@@ -399,7 +405,7 @@ function MongoCollectionsCard({ rows, formatBytes }: CollectionsCardProps) {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading collection stats...
+        Đang tải thống kê collection...
       </div>
     );
   }
@@ -407,7 +413,7 @@ function MongoCollectionsCard({ rows, formatBytes }: CollectionsCardProps) {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600 dark:border-red-500/40 dark:bg-red-500/10">
-        Failed to load collection stats.
+        Không thể tải thống kê collection.
       </div>
     );
   }
@@ -415,10 +421,10 @@ function MongoCollectionsCard({ rows, formatBytes }: CollectionsCardProps) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-        Collections Overview
+        Tổng quan collection
       </h3>
       <p className="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-        Collections from your app (Carts, Orders, Products, Reviews, ...)
+        Các collection của ứng dụng (Carts, Orders, Products, Reviews, ...)
       </p>
 
       <div className="mt-5 max-w-full overflow-x-auto custom-scrollbar">
@@ -426,12 +432,12 @@ function MongoCollectionsCard({ rows, formatBytes }: CollectionsCardProps) {
           <thead>
             <tr className="border-b border-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:border-gray-800">
               <th className="py-2 pr-4">Collection</th>
-              <th className="py-2 px-4 text-right">Documents</th>
-              <th className="py-2 px-4 text-right">Data Size</th>
-              <th className="py-2 px-4 text-right">Storage Size</th>
-              <th className="py-2 px-4 text-right">Avg Doc</th>
-              <th className="py-2 px-4 text-right">Indexes</th>
-              <th className="py-2 pl-4 text-right">Index Size</th>
+              <th className="py-2 px-4 text-right">Số document</th>
+              <th className="py-2 px-4 text-right">Dung lượng dữ liệu</th>
+              <th className="py-2 px-4 text-right">Dung lượng lưu trữ</th>
+              <th className="py-2 px-4 text-right">Doc trung bình</th>
+              <th className="py-2 px-4 text-right">Số index</th>
+              <th className="py-2 pl-4 text-right">Dung lượng index</th>
             </tr>
           </thead>
           <tbody>
@@ -456,9 +462,7 @@ function MongoCollectionsCard({ rows, formatBytes }: CollectionsCardProps) {
                     {formatBytes(s.storageSize * 1024)}
                   </td>
                   <td className="py-2 px-4 text-right">
-                    {s.avgObjSize > 0
-                      ? formatBytes(s.avgObjSize * 1024)
-                      : "-"}
+                    {s.avgObjSize > 0 ? formatBytes(s.avgObjSize * 1024) : "-"}
                   </td>
                   <td className="py-2 px-4 text-right">
                     {s.indexes.toLocaleString()}
@@ -494,7 +498,7 @@ function MongoIndexHealthCard({ stats }: IndexHealthProps) {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading index health...
+        Đang tải tình trạng index...
       </div>
     );
   }
@@ -502,7 +506,7 @@ function MongoIndexHealthCard({ stats }: IndexHealthProps) {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600 dark:border-red-500/40 dark:bg-red-500/10">
-        Failed to load index stats.
+        Không thể tải thống kê index.
       </div>
     );
   }
@@ -519,10 +523,10 @@ function MongoIndexHealthCard({ stats }: IndexHealthProps) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-        Index Health
+        Tình trạng index
       </h3>
       <p className="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-        Top 10 most-used indexes across app collections
+        Top 10 index được sử dụng nhiều nhất trên các collection
       </p>
 
       <div className="mt-4 max-w-full overflow-x-auto custom-scrollbar">
@@ -532,8 +536,8 @@ function MongoIndexHealthCard({ stats }: IndexHealthProps) {
               <th className="py-2 pr-3">Collection</th>
               <th className="py-2 px-3">Index</th>
               <th className="py-2 px-3">Key</th>
-              <th className="py-2 px-3 text-right">Accesses</th>
-              <th className="py-2 pl-3 text-right">Since</th>
+              <th className="py-2 px-3 text-right">Số lần truy cập</th>
+              <th className="py-2 pl-3 text-right">Từ thời điểm</th>
             </tr>
           </thead>
           <tbody>
@@ -560,9 +564,7 @@ function MongoIndexHealthCard({ stats }: IndexHealthProps) {
                   {idx.accessesOps.toLocaleString()}
                 </td>
                 <td className="py-2 pl-3 text-right text-xs text-gray-500 dark:text-gray-400">
-                  {idx.since
-                    ? new Date(idx.since).toLocaleString()
-                    : "-"}
+                  {idx.since ? new Date(idx.since).toLocaleString() : "-"}
                 </td>
               </tr>
             ))}

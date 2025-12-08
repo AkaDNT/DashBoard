@@ -73,7 +73,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1}
         className="mr-2.5 flex h-10 items-center justify-center rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-700 shadow-theme-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]"
       >
-        Previous
+        Trước
       </button>
 
       <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === totalPages}
         className="ml-2.5 flex h-10 items-center justify-center rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-700 shadow-theme-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]"
       >
-        Next
+        Sau
       </button>
     </div>
   );
@@ -112,15 +112,10 @@ const Pagination: React.FC<PaginationProps> = ({
 const UsersPage: React.FC = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  // danh sách user đã tick
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
-  // modal view details
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  // modal confirm delete
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  // alert
   const [alert, setAlert] = useState<AlertState>(null);
-  // input role trong modal
   const [roleInput, setRoleInput] = useState<"Admin" | "User">("User");
 
   const pageSize = 12;
@@ -167,7 +162,6 @@ const UsersPage: React.FC = () => {
   const singleSelectedId =
     selectedUserIds.length === 1 ? selectedUserIds[0] : null;
 
-  // gọi overview khi có id + modal mở
   const {
     data: selectedUser,
     isLoading: isUserLoading,
@@ -176,14 +170,12 @@ const UsersPage: React.FC = () => {
     skip: !singleSelectedId || !isDetailOpen,
   });
 
-  // đồng bộ roleInput với selectedUser
   useEffect(() => {
     if (selectedUser) {
       setRoleInput(selectedUser.isAdmin ? "Admin" : "User");
     }
   }, [selectedUser]);
 
-  // auto hide alert sau 3s
   useEffect(() => {
     if (!alert) return;
     const timer = setTimeout(() => setAlert(null), 3000);
@@ -209,13 +201,11 @@ const UsersPage: React.FC = () => {
     setIsDetailOpen(false);
   };
 
-  // mở modal xác nhận xoá
   const handleOpenDeleteConfirm = () => {
     if (selectedUserIds.length === 0) return;
     setIsDeleteConfirmOpen(true);
   };
 
-  // xác nhận xoá
   const handleConfirmDelete = async () => {
     if (selectedUserIds.length === 0) {
       setIsDeleteConfirmOpen(false);
@@ -233,17 +223,15 @@ const UsersPage: React.FC = () => {
 
       setAlert({
         variant: "success",
-        title: "Delete successful",
-        message: `Deleted ${idsToDelete.length} user${
-          idsToDelete.length > 1 ? "s" : ""
-        }.`,
+        title: "Xoá thành công",
+        message: `Đã xoá ${idsToDelete.length} người dùng.`,
       });
     } catch (error) {
       console.error("Failed to delete users", error);
       setAlert({
         variant: "error",
-        title: "Error",
-        message: "Could not delete users. Please try again.",
+        title: "Lỗi",
+        message: "Không thể xoá người dùng. Vui lòng thử lại.",
       });
     }
   };
@@ -252,7 +240,6 @@ const UsersPage: React.FC = () => {
     setIsDeleteConfirmOpen(false);
   };
 
-  // lưu role (set Admin/User)
   const handleSaveRole = async () => {
     if (!selectedUser) return;
 
@@ -267,22 +254,22 @@ const UsersPage: React.FC = () => {
 
       setAlert({
         variant: "success",
-        title: "Saved",
-        message: "User role has been updated.",
+        title: "Đã lưu",
+        message: "Quyền của người dùng đã được cập nhật.",
       });
     } catch (error) {
       console.error("Failed to update user role", error);
       setAlert({
         variant: "error",
-        title: "Error",
-        message: "Could not update user role. Please try again.",
+        title: "Lỗi",
+        message: "Không thể cập nhật quyền người dùng. Vui lòng thử lại.",
       });
     }
   };
 
   return (
     <div className="space-y-6">
-      <PageBreadcrumb pageTitle="Users" />
+      <PageBreadcrumb pageTitle="Người dùng" />
 
       {alert && (
         <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4">
@@ -297,12 +284,11 @@ const UsersPage: React.FC = () => {
       )}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        {/* Header + actions */}
         <div className="flex flex-col gap-3 border-b border-gray-100 px-5 pt-4 pb-4 dark:border-white/[0.05] sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full max-w-md">
             <input
               type="text"
-              placeholder="Search by username or email..."
+              placeholder="Tìm theo tên người dùng hoặc email..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -344,7 +330,7 @@ const UsersPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              View details
+              Xem chi tiết
             </button>
 
             <button
@@ -365,12 +351,11 @@ const UsersPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Đang xoá..." : "Xoá"}
             </button>
           </div>
         </div>
 
-        {/* Table */}
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[900px]">
             <Table>
@@ -380,13 +365,13 @@ const UsersPage: React.FC = () => {
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    User ID
+                    ID người dùng
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Username
+                    Tên người dùng
                   </TableCell>
                   <TableCell
                     isHeader
@@ -398,13 +383,13 @@ const UsersPage: React.FC = () => {
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Role
+                    Quyền
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Email verified
+                    Email xác minh
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -413,7 +398,7 @@ const UsersPage: React.FC = () => {
                 {isLoading && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                      Loading...
+                      Đang tải...
                     </TableCell>
                   </TableRow>
                 )}
@@ -421,7 +406,7 @@ const UsersPage: React.FC = () => {
                 {isError && !isLoading && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-red-500">
-                      Failed to load data.
+                      Không thể tải dữ liệu.
                     </TableCell>
                   </TableRow>
                 )}
@@ -457,7 +442,7 @@ const UsersPage: React.FC = () => {
                           size="sm"
                           color={user.isAdmin ? "success" : "warning"}
                         >
-                          {user.isAdmin ? "Admin" : "User"}
+                          {user.isAdmin ? "Quản trị viên" : "Người dùng"}
                         </Badge>
                       </TableCell>
 
@@ -466,7 +451,9 @@ const UsersPage: React.FC = () => {
                           size="sm"
                           color={user.isEmailVerified ? "success" : "error"}
                         >
-                          {user.isEmailVerified ? "Verified" : "Unverified"}
+                          {user.isEmailVerified
+                            ? "Đã xác minh"
+                            : "Chưa xác minh"}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -475,7 +462,7 @@ const UsersPage: React.FC = () => {
                 {!isLoading && !isError && rows.length === 0 && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                      No users found.
+                      Không tìm thấy người dùng nào.
                     </TableCell>
                   </TableRow>
                 )}
@@ -484,10 +471,9 @@ const UsersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex flex-col items-center justify-between gap-3 px-5 pb-4 pt-3 sm:flex-row">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Showing {from} to {to} of {totalCount} entries
+            Hiển thị từ {from} đến {to} trên tổng {totalCount} dòng
           </p>
 
           <Pagination
@@ -501,7 +487,6 @@ const UsersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal view details user */}
       <Modal
         isOpen={isDetailOpen}
         onClose={handleCloseDetails}
@@ -510,11 +495,11 @@ const UsersPage: React.FC = () => {
         <div className="no-scrollbar relative w-full max-w-[900px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
           <div className="px-2 pr-10">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              User details
+              Chi tiết người dùng
             </h4>
             {singleSelectedId && (
               <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                User ID:{" "}
+                ID người dùng:{" "}
                 <span className="font-medium text-gray-800 dark:text-gray-200">
                   {singleSelectedId}
                 </span>
@@ -525,25 +510,24 @@ const UsersPage: React.FC = () => {
           <div className="custom-scrollbar max-h-[520px] overflow-y-auto px-2 pb-3">
             {isUserLoading && (
               <p className="px-2 text-sm text-gray-500 dark:text-gray-400">
-                Loading...
+                Đang tải...
               </p>
             )}
 
             {isUserError && !isUserLoading && (
               <p className="px-2 text-sm text-red-500">
-                Failed to load user details.
+                Không thể tải chi tiết người dùng.
               </p>
             )}
 
             {!isUserLoading && !isUserError && selectedUser && (
               <div className="space-y-8">
-                {/* Account */}
                 <section className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-[auto,1fr] items-center">
                   <div className="flex justify-center lg:justify-start" />
                   <div className="grid grid-cols-1 gap-x-6 gap-y-3 lg:grid-cols-2">
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Username
+                        Tên người dùng
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedUser.username}
@@ -558,10 +542,9 @@ const UsersPage: React.FC = () => {
                       </p>
                     </div>
 
-                    {/* Role có thể chỉnh sửa */}
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Role
+                        Quyền
                       </p>
                       <select
                         className="mt-0.5 h-9 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-800 shadow-sm outline-none focus:border-brand-500 focus:ring-0 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -570,14 +553,14 @@ const UsersPage: React.FC = () => {
                           setRoleInput(e.target.value as "Admin" | "User")
                         }
                       >
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
+                        <option value="User">Người dùng</option>
+                        <option value="Admin">Quản trị viên</option>
                       </select>
                     </div>
 
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Email verified
+                        Email xác minh
                       </p>
                       <Badge
                         size="sm"
@@ -586,18 +569,17 @@ const UsersPage: React.FC = () => {
                         }
                       >
                         {selectedUser.isEmailVerified
-                          ? "Verified"
-                          : "Unverified"}
+                          ? "Đã xác minh"
+                          : "Chưa xác minh"}
                       </Badge>
                     </div>
                   </div>
                 </section>
 
-                {/* Profile info */}
                 <section className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Name
+                      Họ và tên
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                       {selectedUser.name || "-"}
@@ -605,7 +587,7 @@ const UsersPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Phone number
+                      Số điện thoại
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                       {selectedUser.phoneNumber || "-"}
@@ -613,7 +595,7 @@ const UsersPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Gender
+                      Giới tính
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                       {selectedUser.gender || "-"}
@@ -621,7 +603,7 @@ const UsersPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Birthday
+                      Ngày sinh
                     </p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                       {selectedUser.birthday
@@ -633,15 +615,14 @@ const UsersPage: React.FC = () => {
                   </div>
                 </section>
 
-                {/* Order stats */}
                 <section className="space-y-3">
                   <h5 className="text-sm font-semibold text-gray-800 dark:text-white/90">
-                    Order statistics
+                    Thống kê đơn hàng
                   </h5>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Total orders
+                        Tổng số đơn
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.totalOrders}
@@ -649,7 +630,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Not confirmed
+                        Chưa xác nhận
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.notConfirmOrders}
@@ -657,7 +638,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Pending
+                        Đang xử lý
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.pendingOrders}
@@ -665,7 +646,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Confirmed
+                        Đã xác nhận
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.confirmedOrders}
@@ -673,7 +654,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Shipped
+                        Đang giao
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.shippedOrders}
@@ -681,7 +662,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Delivered
+                        Đã giao
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.deliveredOrders}
@@ -689,7 +670,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                       <p className="text-gray-500 dark:text-gray-400">
-                        Cancelled
+                        Đã huỷ
                       </p>
                       <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.cancelledOrders}
@@ -700,7 +681,7 @@ const UsersPage: React.FC = () => {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Total spent
+                        Tổng chi tiêu
                       </p>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
                         {selectedUser.totalSpent.toLocaleString("vi-VN")} VND
@@ -708,7 +689,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        First order at
+                        Đơn hàng đầu tiên lúc
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedUser.firstOrderAt
@@ -720,7 +701,7 @@ const UsersPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Last order at
+                        Đơn hàng gần nhất lúc
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedUser.lastOrderAt
@@ -733,11 +714,10 @@ const UsersPage: React.FC = () => {
                   </div>
                 </section>
 
-                {/* Cart & wishlist */}
                 <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
                   <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                     <p className="text-gray-500 dark:text-gray-400">
-                      Cart items
+                      Sản phẩm trong giỏ
                     </p>
                     <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                       {selectedUser.cartItemCount}
@@ -745,7 +725,7 @@ const UsersPage: React.FC = () => {
                   </div>
                   <div className="rounded-2xl border border-gray-100 p-3 text-xs dark:border-white/10">
                     <p className="text-gray-500 dark:text-gray-400">
-                      Wishlist items
+                      Sản phẩm yêu thích
                     </p>
                     <p className="mt-1 text-base font-semibold text-gray-800 dark:text-white/90">
                       {selectedUser.wishlistCount}
@@ -762,7 +742,7 @@ const UsersPage: React.FC = () => {
               onClick={handleCloseDetails}
               className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
             >
-              Close
+              Đóng
             </button>
             <button
               type="button"
@@ -770,13 +750,12 @@ const UsersPage: React.FC = () => {
               disabled={isUpdatingRole}
               className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isUpdatingRole ? "Saving..." : "Save"}
+              {isUpdatingRole ? "Đang lưu..." : "Lưu"}
             </button>
           </div>
         </div>
       </Modal>
 
-      {/* Modal xác nhận xoá user */}
       <Modal
         isOpen={isDeleteConfirmOpen}
         onClose={handleCloseDeleteConfirm}
@@ -784,15 +763,14 @@ const UsersPage: React.FC = () => {
       >
         <div className="w-full max-w-md rounded-3xl bg-white p-6 dark:bg-gray-900">
           <h4 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
-            Confirm delete
+            Xác nhận xoá
           </h4>
           <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-            Are you sure you want to delete{" "}
+            Bạn có chắc chắn muốn xoá{" "}
             <span className="font-semibold">
-              {selectedUserIds.length} selected user
-              {selectedUserIds.length > 1 ? "s" : ""}
+              {selectedUserIds.length} người dùng đã chọn
             </span>
-            ? This action cannot be undone.
+            ? Hành động này không thể hoàn tác.
           </p>
           <div className="flex justify-end gap-3">
             <button
@@ -800,7 +778,7 @@ const UsersPage: React.FC = () => {
               onClick={handleCloseDeleteConfirm}
               className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
             >
-              Cancel
+              Huỷ
             </button>
             <button
               type="button"
@@ -808,7 +786,7 @@ const UsersPage: React.FC = () => {
               disabled={isDeleting}
               className="inline-flex items-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Đang xoá..." : "Xoá"}
             </button>
           </div>
         </div>

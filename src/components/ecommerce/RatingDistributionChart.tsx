@@ -14,7 +14,7 @@ export default function UserDemographicsCharts() {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading demographics...
+        Đang tải thống kê nhân khẩu học...
       </div>
     );
   }
@@ -22,7 +22,7 @@ export default function UserDemographicsCharts() {
   if (isError || !data) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load demographics.
+        Không thể tải thống kê nhân khẩu học.
       </div>
     );
   }
@@ -50,7 +50,7 @@ export default function UserDemographicsCharts() {
         formatter: (val: number) => {
           const pct =
             genderTotal > 0 ? ((val / genderTotal) * 100).toFixed(1) + "%" : "";
-          return `${val} users (${pct})`;
+          return `${val} người dùng (${pct})`;
         },
       },
     },
@@ -90,20 +90,20 @@ export default function UserDemographicsCharts() {
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          User Demographics
+          Nhân khẩu học người dùng
         </h3>
         <span className="text-xs text-gray-400">
-          {genderTotal.toLocaleString("vi-VN")} users
+          {genderTotal.toLocaleString("vi-VN")} người dùng
         </span>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-            Gender
+            Giới tính
           </p>
           {genderTotal === 0 ? (
-            <p className="text-xs text-gray-400">No data.</p>
+            <p className="text-xs text-gray-400">Không có dữ liệu.</p>
           ) : (
             <ReactApexChart
               options={genderOptions}
@@ -116,14 +116,14 @@ export default function UserDemographicsCharts() {
 
         <div>
           <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-            Age
+            Độ tuổi
           </p>
           {ageCounts.length === 0 ? (
-            <p className="text-xs text-gray-400">No data.</p>
+            <p className="text-xs text-gray-400">Không có dữ liệu.</p>
           ) : (
             <ReactApexChart
               options={ageOptions}
-              series={[{ name: "Users", data: ageCounts }]}
+              series={[{ name: "Người dùng", data: ageCounts }]}
               type="bar"
               height={220}
             />

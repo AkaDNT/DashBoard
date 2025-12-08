@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     
-    <html lang="en" suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${outfit.className} dark:bg-gray-900`}>
         <Provider store={store}>
         <ThemeProvider>

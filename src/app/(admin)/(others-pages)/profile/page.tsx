@@ -6,7 +6,7 @@ export default function Profile() {
   return (
     <div>
       <div className="space-y-6">
-        <PageBreadcrumb pageTitle="Profile" />
+        <PageBreadcrumb pageTitle="Hồ sơ của bạn" />
         <div className="space-y-6">
           <UserInfoCard />
         </div>

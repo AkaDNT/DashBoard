@@ -11,7 +11,6 @@ import OrdersDailyChart from "@/components/ecommerce/OrdersDailyChart";
 import ProductCategoryBarChart from "@/components/ecommerce/ProductCategoryBarChart";
 import OrderStatusDonutChart from "@/components/ecommerce/OrderStatusDonutChart";
 import PaymentMethodChart from "@/components/ecommerce/PaymentMethodChart";
-import UserDemographicsCharts from "@/components/ecommerce/RatingDistributionChart";
 
 
 
@@ -49,7 +48,6 @@ export default function Ecommerce() {
   </div>
     
     <ProductStatsCard/>
-    <UserDemographicsCharts />
   </div>
       
       

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
@@ -11,18 +12,18 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Th1",
+  "Th2",
+  "Th3",
+  "Th4",
+  "Th5",
+  "Th6",
+  "Th7",
+  "Th8",
+  "Th9",
+  "Th10",
+  "Th11",
+  "Th12",
 ];
 
 export default function StatisticsChart() {
@@ -52,14 +53,14 @@ export default function StatisticsChart() {
 
   const series = [
     {
-      name: `Total Orders ${selectedYear}`,
+      name: `Tổng đơn hàng ${selectedYear}`,
       data: MONTH_LABELS.map((_, index) => ({
         x: index + 1,
         y: monthlyTotalsAll[index],
       })),
     },
     {
-      name: `Cancelled Orders ${selectedYear}`,
+      name: `Đơn bị hủy ${selectedYear}`,
       data: MONTH_LABELS.map((_, index) => ({
         x: index + 1,
         y: monthlyTotalsCancelled[index],
@@ -132,7 +133,7 @@ export default function StatisticsChart() {
         },
       },
       y: {
-        formatter: (val: number) => `${val} orders`,
+        formatter: (val: number) => `${val} đơn hàng`,
       },
     },
     xaxis: {
@@ -188,7 +189,7 @@ export default function StatisticsChart() {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading statistics...
+        Đang tải thống kê...
       </div>
     );
   }
@@ -196,7 +197,7 @@ export default function StatisticsChart() {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load statistics.
+        Không thể tải thống kê.
       </div>
     );
   }
@@ -206,10 +207,10 @@ export default function StatisticsChart() {
       <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:justify-between">
         <div className="w-full">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Statistics
+            Thống kê
           </h3>
           <p className="mt-1 text-theme-sm text-gray-500 dark:text-gray-400">
-            Total vs cancelled orders per month
+            Tổng số đơn vs đơn bị hủy theo tháng
           </p>
         </div>
         <div className="flex w-full items-start gap-3 sm:justify-end">

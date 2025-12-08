@@ -30,8 +30,8 @@ export default function UserDropdown() {
     router.push("/signin");
   }
 
-  const displayName = isLoading ? "Loading..." : me?.username ?? "Guest";
-  const displayEmail = isLoading ? "Loading..." : me?.email ?? "-";
+  const displayName = isLoading ? "Đang tải..." : me?.username ?? "Khách";
+  const displayEmail = isLoading ? "Đang tải..." : me?.email ?? "-";
 
   return (
     <div className="relative">
@@ -97,7 +97,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Edit profile
+              Chỉnh sửa hồ sơ
             </DropdownItem>
           </li>
           <li>
@@ -122,7 +122,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Support
+              Hỗ trợ
             </DropdownItem>
           </li>
         </ul>
@@ -146,7 +146,7 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          Sign out
+          Đăng xuất
         </button>
       </Dropdown>
     </div>

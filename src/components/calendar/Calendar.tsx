@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import viLocale from "@fullcalendar/core/locales/vi";
 import {
   DateSelectArg,
   EventClickArg,
@@ -29,9 +30,9 @@ interface CalendarEvent {
   allDay?: boolean;
   extendedProps: {
     calendar: "Danger" | "Success" | "Primary" | "Warning";
-    percent?: number;    // 0–1
-    saleStart?: string;  // ISO đầy đủ để edit
-    saleEnd?: string;    // ISO đầy đủ để edit
+    percent?: number; // 0–1
+    saleStart?: string; // ISO đầy đủ để edit
+    saleEnd?: string; // ISO đầy đủ để edit
   };
 }
 
@@ -65,8 +66,6 @@ const calendarColorClassMap: Record<
   },
 };
 
-
-
 const calendarsEvents: Record<string, string> = {
   Danger: "danger",
   Success: "success",
@@ -91,7 +90,6 @@ const Calendar: React.FC = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
-  // RTK Query
   const {
     data: saleEvents,
     isLoading: isSaleLoading,
@@ -106,24 +104,22 @@ const Calendar: React.FC = () => {
   const [deleteSaleEvents, { isLoading: isDeleting }] =
     useDeleteSaleEventsMutation();
 
-  // Map backend -> FullCalendar
   useEffect(() => {
     if (!saleEvents) return;
 
     const mapped: CalendarEvent[] = saleEvents.map((e: SaleEvent) => {
-      // chỉ hiển thị ở ngày bắt đầu: lấy phần YYYY-MM-DD
       const startDay =
         e.startDate?.split("T")[0] ?? new Date().toISOString().split("T")[0];
 
       return {
         id: e.id,
         title: e.title,
-        start: startDay,   // ❗ chỉ ngày bắt đầu, không set end => chỉ hiện 1 ngày
+        start: startDay,
         allDay: true,
         extendedProps: {
           calendar: e.color,
           percent: e.percent,
-          saleStart: e.startDate, // ISO full để dùng khi mở modal
+          saleStart: e.startDate,
           saleEnd: e.endDate,
         },
       };
@@ -144,7 +140,7 @@ const Calendar: React.FC = () => {
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
-    const startStr = selectInfo.startStr; // YYYY-MM-DD
+    const startStr = selectInfo.startStr;
     const endStr = selectInfo.endStr || selectInfo.startStr;
 
     setEventStartDate(startStr);
@@ -163,7 +159,6 @@ const Calendar: React.FC = () => {
 
     const percentBackend = typeof ext.percent === "number" ? ext.percent : 0;
 
-    // Lấy start/end thật từ extendedProps (saleStart/saleEnd)
     const saleStartIso: string | undefined = ext.saleStart;
     const saleEndIso: string | undefined = ext.saleEnd;
 
@@ -218,61 +213,62 @@ const Calendar: React.FC = () => {
   };
 
   const handleAddOrUpdateEvent = async () => {
-  if (!eventTitle || !eventStartDate || !eventEndDate) {
-    setFormError("Please fill in title, start date and end date.");
-    return;
-  }
-
-  if (!eventLevel) {
-    setFormError("Please select an event color.");
-    return;
-  }
-
-  const percentValue = eventPercent === "" ? 0 : Number(eventPercent);
-  if (Number.isNaN(percentValue) || percentValue < 0 || percentValue > 100) {
-    setFormError("Discount percent must be between 0 and 100.");
-    return;
-  }
-
-  const startIso = new Date(eventStartDate).toISOString();
-  const endIso = new Date(eventEndDate).toISOString();
-
-  if (new Date(startIso) > new Date(endIso)) {
-    setFormError("Start date must be before or equal to end date.");
-    return;
-  }
-
-  const payload: CreateSaleEventRequest = {
-    title: eventTitle.trim(),
-    color: eventLevel as "Danger" | "Success" | "Primary" | "Warning",
-    startDate: startIso,
-    endDate: endIso,
-    percent: percentValue / 100,   // backend dùng 0–1, 10% => 0.1
-    productIds: [],                // nếu backend BẮT BUỘC phải có, tạm thời nhét 1 id test
-    // productIds: ["68366fcc787d0450227ca5a6"],
-  };
-
-  try {
-    setFormError(null);
-    setGlobalError(null);
-
-    if (selectedEvent) {
-      await updateSaleEvent({ id: selectedEvent.id, data: payload }).unwrap();
-    } else {
-      await createSaleEvent(payload).unwrap();
+    if (!eventTitle || !eventStartDate || !eventEndDate) {
+      setFormError(
+        "Vui lòng nhập tiêu đề, ngày bắt đầu và ngày kết thúc."
+      );
+      return;
     }
 
-    await refetchSaleEvents();
-    closeModal();
-    resetModalFields();
-  } catch (error: any) {
-    console.error("Failed to save sale event", error);
-    setFormError(
-      error?.data?.message ??
-        "Failed to save sale event. Please check data and try again."
-    );
-  }
-};
+    if (!eventLevel) {
+      setFormError("Vui lòng chọn màu sự kiện.");
+      return;
+    }
+
+    const percentValue = eventPercent === "" ? 0 : Number(eventPercent);
+    if (Number.isNaN(percentValue) || percentValue < 0 || percentValue > 100) {
+      setFormError("Phần trăm giảm giá phải nằm trong khoảng từ 0 đến 100.");
+      return;
+    }
+
+    const startIso = new Date(eventStartDate).toISOString();
+    const endIso = new Date(eventEndDate).toISOString();
+
+    if (new Date(startIso) > new Date(endIso)) {
+      setFormError("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.");
+      return;
+    }
+
+    const payload: CreateSaleEventRequest = {
+      title: eventTitle.trim(),
+      color: eventLevel as "Danger" | "Success" | "Primary" | "Warning",
+      startDate: startIso,
+      endDate: endIso,
+      percent: percentValue / 100,
+      productIds: [],
+    };
+
+    try {
+      setFormError(null);
+      setGlobalError(null);
+
+      if (selectedEvent) {
+        await updateSaleEvent({ id: selectedEvent.id, data: payload }).unwrap();
+      } else {
+        await createSaleEvent(payload).unwrap();
+      }
+
+      await refetchSaleEvents();
+      closeModal();
+      resetModalFields();
+    } catch (error: any) {
+      console.error("Failed to save sale event", error);
+      setFormError(
+        error?.data?.message ??
+          "Lưu sự kiện khuyến mãi thất bại. Vui lòng kiểm tra dữ liệu và thử lại."
+      );
+    }
+  };
 
   const handleDeleteCurrentEvent = async () => {
     if (!selectedEvent) return;
@@ -288,7 +284,8 @@ const Calendar: React.FC = () => {
     } catch (error: any) {
       console.error("Failed to delete sale event", error);
       setFormError(
-        error?.data?.message ?? "Failed to delete sale event. Please try again."
+        error?.data?.message ??
+          "Xóa sự kiện khuyến mãi thất bại. Vui lòng thử lại."
       );
     }
   };
@@ -306,12 +303,12 @@ const Calendar: React.FC = () => {
         )}
         {isSaleLoading && (
           <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-            Loading sale events...
+            Đang tải sự kiện khuyến mãi...
           </p>
         )}
         {isSaleError && (
           <p className="mb-2 text-sm text-red-500">
-            Failed to load sale events.
+            Không thể tải sự kiện khuyến mãi.
           </p>
         )}
 
@@ -325,6 +322,16 @@ const Calendar: React.FC = () => {
               center: "title",
               right: "dayGridMonth",
             }}
+            locale="vi"
+  locales={[viLocale]}
+  buttonText={{
+    today: "Hôm nay",
+    month: "Tháng",
+    week: "Tuần",
+    day: "Ngày",
+    list: "Danh sách",
+  }}
+  titleFormat={{ year: "numeric", month: "long" }}
             events={events}
             selectable={true}
             select={handleDateSelect}
@@ -332,7 +339,7 @@ const Calendar: React.FC = () => {
             eventContent={renderEventContent}
             customButtons={{
               addEventButton: {
-                text: "Add Event +",
+                text: "Thêm sự kiện +",
                 click: handleOpenEmptyModal,
               },
             }}
@@ -348,17 +355,18 @@ const Calendar: React.FC = () => {
         <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
           <div>
             <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
-              {selectedEvent ? "Edit Sale Event" : "Add Sale Event"}
+              {selectedEvent ? "Chỉnh sửa sự kiện khuyến mãi" : "Thêm sự kiện khuyến mãi"}
             </h5>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Plan product promotion by scheduling sale events on the calendar.
+              Lên kế hoạch khuyến mãi sản phẩm bằng cách tạo các sự kiện giảm
+              giá trên lịch.
             </p>
           </div>
 
           <div className="mt-8">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Event Title
+                Tiêu đề sự kiện
               </label>
               <input
                 id="event-title"
@@ -371,7 +379,7 @@ const Calendar: React.FC = () => {
 
             <div className="mt-6">
               <label className="block mb-4 text-sm font-medium text-gray-700 dark:text-gray-400">
-                Event Color
+                Màu sự kiện
               </label>
               <div className="flex flex-wrap items-center gap-4 sm:gap-5">
                 {Object.entries(calendarsEvents).map(([key, value]) => (
@@ -419,7 +427,7 @@ const Calendar: React.FC = () => {
 
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Discount percent (%)
+                Phần trăm giảm giá (%)
               </label>
               <input
                 type="number"
@@ -429,14 +437,14 @@ const Calendar: React.FC = () => {
                     e.target.value === "" ? "" : Number(e.target.value)
                   )
                 }
-                placeholder="e.g. 10, 20, 50"
+                placeholder="Ví dụ: 10, 20, 50"
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
               />
             </div>
 
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Enter Start Date
+                Ngày bắt đầu
               </label>
               <div className="relative">
                 <input
@@ -451,7 +459,7 @@ const Calendar: React.FC = () => {
 
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Enter End Date
+                Ngày kết thúc
               </label>
               <div className="relative">
                 <input
@@ -477,7 +485,7 @@ const Calendar: React.FC = () => {
                 disabled={isDeleting}
                 className="flex w-full justify-center rounded-lg bg-red-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? "Đang xóa..." : "Xóa"}
               </button>
             )}
 
@@ -486,7 +494,7 @@ const Calendar: React.FC = () => {
               type="button"
               className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg:white/[0.03] sm:w-auto"
             >
-              Close
+              Đóng
             </button>
             <button
               onClick={handleAddOrUpdateEvent}
@@ -495,10 +503,10 @@ const Calendar: React.FC = () => {
               className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {isCreating || isUpdating
-                ? "Saving..."
+                ? "Đang lưu..."
                 : selectedEvent
-                ? "Update Changes"
-                : "Add Event"}
+                ? "Cập nhật thay đổi"
+                : "Thêm sự kiện"}
             </button>
           </div>
         </div>
@@ -520,7 +528,7 @@ const renderEventContent = (eventInfo: EventContentArg) => {
 
   const formatIsoDate = (iso?: string) => {
     if (!iso) return "";
-    return iso.split("T")[0]; // YYYY-MM-DD
+    return iso.split("T")[0];
   };
 
   const startLabel = formatIsoDate(saleStartIso);
@@ -552,7 +560,5 @@ const renderEventContent = (eventInfo: EventContentArg) => {
     </div>
   );
 };
-
-
 
 export default Calendar;

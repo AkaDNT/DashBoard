@@ -21,14 +21,12 @@ export const EcommerceMetrics = () => {
     isError: isOrdersCountError,
   } = useGetTotalOrdersQuery();
 
-  // Lấy tất cả orders để tính doanh thu / AOV / tỉ lệ trạng thái
   const {
     data: orders = [],
     isLoading: isOrdersLoading,
     isError: isOrdersError,
   } = useGetOrdersQuery();
 
-  // Stats product
   const {
     data: productStats,
     isLoading: isProductStatsLoading,
@@ -55,10 +53,7 @@ export const EcommerceMetrics = () => {
     const delivered = orders.filter((o) => o.status === "Delivered");
     const cancelled = orders.filter((o) => o.status === "Cancelled");
 
-    const revenue = delivered.reduce(
-      (sum, o) => sum + o.totalAmount,
-      0
-    );
+    const revenue = delivered.reduce((sum, o) => sum + o.totalAmount, 0);
 
     const deliveredCount = delivered.length;
     const totalOrders = orders.length;
@@ -69,8 +64,7 @@ export const EcommerceMetrics = () => {
     const cancelRate =
       totalOrders > 0 ? (cancelled.length / totalOrders) * 100 : 0;
 
-    const avgOrderValue =
-      deliveredCount > 0 ? revenue / deliveredCount : 0;
+    const avgOrderValue = deliveredCount > 0 ? revenue / deliveredCount : 0;
 
     return {
       totalRevenue: revenue,
@@ -98,7 +92,6 @@ export const EcommerceMetrics = () => {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-      {/* Users */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
           <GroupIcon className="size-6 text-gray-800 dark:text-white/90" />
@@ -107,18 +100,17 @@ export const EcommerceMetrics = () => {
         <div className="mt-5 flex items-end justify-between">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Users
+              Người dùng
             </span>
             <h4 className="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90">
               {totalUsers !== null
                 ? totalUsers.toLocaleString("vi-VN")
-                : "Loading..."}
+                : "Đang tải..."}
             </h4>
           </div>
         </div>
       </div>
 
-      {/* Orders */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
           <BoxIconLine className="text-gray-800 dark:text-white/90" />
@@ -126,87 +118,78 @@ export const EcommerceMetrics = () => {
         <div className="mt-5 flex items-end justify-between">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Orders
+              Đơn hàng
             </span>
             <h4 className="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90">
               {totalOrders !== null
                 ? totalOrders.toLocaleString("vi-VN")
-                : "Loading..."}
+                : "Đang tải..."}
             </h4>
             <p className="mt-1 text-xs text-gray-400">
-              Delivered:{" "}
-              {deliveredOrdersCount.toLocaleString("vi-VN")} (
+              Đã giao: {deliveredOrdersCount.toLocaleString("vi-VN")} (
               {deliveredRate.toFixed(1)}%)
             </p>
           </div>
         </div>
       </div>
 
-      {/* Revenue */}
-<div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
-    <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
-      ₫
-    </span>
-  </div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
+          <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+            ₫
+          </span>
+        </div>
 
-  <div className="mt-5 flex items-end justify-between">
-    <div className="min-w-0">
-      <span className="text-sm text-gray-500 dark:text-gray-400">
-        Revenue (Delivered)
-      </span>
-      <h4
-        className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight"
-      >
-        {isOrdersLoading || isOrdersError
-          ? "Loading..."
-          : totalRevenue.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-              maximumFractionDigits: 0,
-            })}
-      </h4>
-    </div>
-  </div>
-</div>
-
-
-      {/* Avg Order Value / Products */}
-<div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
-    <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-      AOV
-    </span>
-  </div>
-  <div className="mt-5 space-y-1">
-    <div className="flex items-end justify-between">
-      <div className="min-w-0">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          Avg Order Value
-        </span>
-        <h4
-          className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight"
-        >
-          {isOrdersLoading || isOrdersError
-            ? "Loading..."
-            : avgOrderValue.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-                maximumFractionDigits: 0,
-              })}
-        </h4>
+        <div className="mt-5 flex items-end justify-between">
+          <div className="min-w-0">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              Doanh thu (đơn đã giao)
+            </span>
+            <h4 className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight">
+              {isOrdersLoading || isOrdersError
+                ? "Đang tải..."
+                : totalRevenue.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                    maximumFractionDigits: 0,
+                  })}
+            </h4>
+          </div>
+        </div>
       </div>
-    </div>
-    <p className="text-xs text-gray-400">
-      Products:{" "}
-      {totalProducts !== null
-        ? totalProducts.toLocaleString("vi-VN")
-        : "..."}{" "}
-      • Cancel rate: {cancelRate.toFixed(1)}%
-    </p>
-  </div>
-</div>
 
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
+          <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+            AOV
+          </span>
+        </div>
+        <div className="mt-5 space-y-1">
+          <div className="flex items-end justify-between">
+            <div className="min-w-0">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Giá trị đơn hàng trung bình
+              </span>
+              <h4 className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight">
+                {isOrdersLoading || isOrdersError
+                  ? "Đang tải..."
+                  : avgOrderValue.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                      maximumFractionDigits: 0,
+                    })}
+              </h4>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400">
+            Sản phẩm:{" "}
+            {totalProducts !== null
+              ? totalProducts.toLocaleString("vi-VN")
+              : "..."}{" "}
+            • Tỷ lệ huỷ: {cancelRate.toFixed(1)}%
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

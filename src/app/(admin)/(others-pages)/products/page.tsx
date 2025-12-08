@@ -70,7 +70,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1}
         className="mr-2.5 flex h-10 items-center justify-center rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-700 shadow-theme-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]"
       >
-        Previous
+        Trước
       </button>
 
       <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === totalPages}
         className="ml-2.5 flex h-10 items-center justify-center rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-700 shadow-theme-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]"
       >
-        Next
+        Sau
       </button>
     </div>
   );
@@ -178,7 +178,6 @@ const ProductsPage: React.FC = () => {
     skip: !singleSelectedId || !isDetailOpen,
   });
 
-  // list URL đã chuẩn hoá (trim, bỏ trùng, bỏ rỗng)
   const normalizedImageUrls = useMemo(
     () =>
       formImageUrls
@@ -187,7 +186,6 @@ const ProductsPage: React.FC = () => {
     [formImageUrls]
   );
 
-  // helper cho UI image
   const handleImageUrlChange = (index: number, value: string) => {
     setFormImageUrls((prev) => {
       const next = [...prev];
@@ -225,7 +223,6 @@ const ProductsPage: React.FC = () => {
     }
   }, [selectedProduct, isDetailOpen]);
 
-  // auto hide alert
   useEffect(() => {
     if (!alert) return;
     const timer = setTimeout(() => setAlert(null), 3000);
@@ -290,34 +287,33 @@ const ProductsPage: React.FC = () => {
       setIsDeleteConfirmOpen(false);
       setAlert({
         variant: "success",
-        title: "Delete successful",
-        message: `Deleted ${idsToDelete.length} product${
-          idsToDelete.length > 1 ? "s" : ""
-        }.`,
+        title: "Xoá thành công",
+        message: `Đã xoá ${idsToDelete.length} sản phẩm.`,
       });
     } catch (error) {
       console.error("Failed to delete products", error);
       setAlert({
         variant: "error",
-        title: "Error",
-        message: "Could not delete products. Please try again.",
+        title: "Lỗi",
+        message: "Không thể xoá sản phẩm. Vui lòng thử lại.",
       });
     }
   };
 
-  // submit create product
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formName || !formCategory || formPrice === "" || formStock === "") {
-      setFormError("Please fill in name, category, price and stock.");
+      setFormError(
+        "Vui lòng nhập đầy đủ tên, danh mục, giá và số lượng tồn kho."
+      );
       return;
     }
 
     const priceNum = Number(formPrice);
     const stockNum = Number(formStock);
     if (Number.isNaN(priceNum) || Number.isNaN(stockNum)) {
-      setFormError("Price and stock must be numbers.");
+      setFormError("Giá và tồn kho phải là số.");
       return;
     }
 
@@ -339,28 +335,31 @@ const ProductsPage: React.FC = () => {
 
       setAlert({
         variant: "success",
-        title: "Product created",
-        message: "New product has been created successfully.",
+        title: "Tạo sản phẩm thành công",
+        message: "Sản phẩm mới đã được tạo.",
       });
     } catch (error) {
       console.error("Failed to create product", error);
-      setFormError("Failed to create product. Please check data and try again.");
+      setFormError(
+        "Không thể tạo sản phẩm. Vui lòng kiểm tra dữ liệu và thử lại."
+      );
     }
   };
 
-  // submit update product (trong modal details)
   const handleUpdateProduct = async () => {
     if (!selectedProduct) return;
 
     if (!formName || !formCategory || formPrice === "" || formStock === "") {
-      setFormError("Please fill in name, category, price and stock.");
+      setFormError(
+        "Vui lòng nhập đầy đủ tên, danh mục, giá và số lượng tồn kho."
+      );
       return;
     }
 
     const priceNum = Number(formPrice);
     const stockNum = Number(formStock);
     if (Number.isNaN(priceNum) || Number.isNaN(stockNum)) {
-      setFormError("Price and stock must be numbers.");
+      setFormError("Giá và tồn kho phải là số.");
       return;
     }
 
@@ -389,18 +388,18 @@ const ProductsPage: React.FC = () => {
 
       setAlert({
         variant: "success",
-        title: "Product updated",
-        message: "Product has been updated successfully.",
+        title: "Cập nhật sản phẩm thành công",
+        message: "Sản phẩm đã được cập nhật.",
       });
     } catch (error) {
       console.error("Failed to update product", error);
-      setFormError("Failed to update product. Please try again.");
+      setFormError("Không thể cập nhật sản phẩm. Vui lòng thử lại.");
     }
   };
 
   return (
     <div className="space-y-6">
-      <PageBreadcrumb pageTitle="Products" />
+      <PageBreadcrumb pageTitle="Sản phẩm" />
 
       {alert && (
         <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4">
@@ -420,7 +419,7 @@ const ProductsPage: React.FC = () => {
           <div className="relative w-full max-w-md">
             <input
               type="text"
-              placeholder="Search by product name..."
+              placeholder="Tìm theo tên sản phẩm..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -461,7 +460,7 @@ const ProductsPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Add product
+              Thêm sản phẩm
             </button>
 
             <button
@@ -482,7 +481,7 @@ const ProductsPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              View / edit
+              Xem / sửa
             </button>
 
             <button
@@ -503,7 +502,7 @@ const ProductsPage: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Đang xoá..." : "Xoá"}
             </button>
           </div>
         </div>
@@ -518,49 +517,49 @@ const ProductsPage: React.FC = () => {
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Product ID
+                    ID sản phẩm
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Name
+                    Tên sản phẩm
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Category
+                    Danh mục
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Price
+                    Giá
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Stock
+                    Tồn kho
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Ordered
+                    Đã bán
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Rating
+                    Đánh giá
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Sale
+                    Khuyến mãi
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -569,7 +568,7 @@ const ProductsPage: React.FC = () => {
                 {isLoading && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                      Loading...
+                      Đang tải...
                     </TableCell>
                   </TableRow>
                 )}
@@ -577,7 +576,7 @@ const ProductsPage: React.FC = () => {
                 {isError && !isLoading && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-red-500">
-                      Failed to load data.
+                      Không thể tải dữ liệu.
                     </TableCell>
                   </TableRow>
                 )}
@@ -638,7 +637,7 @@ const ProductsPage: React.FC = () => {
                           </Badge>
                         ) : (
                           <Badge size="sm" color="warning">
-                            No sale
+                            Không khuyến mãi
                           </Badge>
                         )}
                       </TableCell>
@@ -648,7 +647,7 @@ const ProductsPage: React.FC = () => {
                 {!isLoading && !isError && rows.length === 0 && (
                   <TableRow>
                     <TableCell className="px-5 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                      No products found.
+                      Không tìm thấy sản phẩm nào.
                     </TableCell>
                   </TableRow>
                 )}
@@ -660,7 +659,7 @@ const ProductsPage: React.FC = () => {
         {/* Footer */}
         <div className="flex flex-col items-center justify-between gap-3 px-5 pb-4 pt-3 sm:flex-row">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Showing {from} to {to} of {totalCount} entries
+            Hiển thị từ {from} đến {to} trên tổng {totalCount} dòng
           </p>
 
           <Pagination
@@ -683,11 +682,11 @@ const ProductsPage: React.FC = () => {
         <div className="no-scrollbar relative w-full max-w-[900px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
           <div className="px-2 pr-10">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Product details
+              Chi tiết sản phẩm
             </h4>
             {singleSelectedId && (
               <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                Product ID:{" "}
+                ID sản phẩm:{" "}
                 <span className="font-medium text-gray-800 dark:text-gray-200">
                   {singleSelectedId}
                 </span>
@@ -698,13 +697,13 @@ const ProductsPage: React.FC = () => {
           <div className="custom-scrollbar max-h-[520px] overflow-y-auto px-2 pb-3">
             {isProductLoading && (
               <p className="px-2 text-sm text-gray-500 dark:text-gray-400">
-                Loading...
+                Đang tải...
               </p>
             )}
 
             {isProductError && !isProductLoading && (
               <p className="px-2 text-sm text-red-500">
-                Failed to load product details.
+                Không thể tải chi tiết sản phẩm.
               </p>
             )}
 
@@ -714,7 +713,7 @@ const ProductsPage: React.FC = () => {
                 <section className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Name
+                      Tên sản phẩm
                     </p>
                     <input
                       type="text"
@@ -725,7 +724,7 @@ const ProductsPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Category
+                      Danh mục
                     </p>
                     <input
                       type="text"
@@ -736,7 +735,7 @@ const ProductsPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Price (VND)
+                      Giá (VND)
                     </p>
                     <input
                       type="number"
@@ -751,7 +750,7 @@ const ProductsPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Stock
+                      Tồn kho
                     </p>
                     <input
                       type="number"
@@ -767,7 +766,7 @@ const ProductsPage: React.FC = () => {
 
                   <div className="lg:col-span-2">
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Description
+                      Mô tả
                     </p>
                     <textarea
                       value={formDescription}
@@ -780,14 +779,11 @@ const ProductsPage: React.FC = () => {
                   {/* Images editor */}
                   <div className="lg:col-span-2">
                     <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                      Images
+                      Ảnh
                     </p>
                     <div className="space-y-2">
                       {formImageUrls.map((url, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2"
-                        >
+                        <div key={index} className="flex items-center gap-2">
                           <input
                             type="text"
                             value={url}
@@ -810,9 +806,9 @@ const ProductsPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleAddImageField}
-                        className="mt-1 inline-flex items-center rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-white/[0.04]"
+                        className="mt-1 inline-flex items-center rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg:white/[0.04]"
                       >
-                        + Add image
+                        + Thêm ảnh
                       </button>
 
                       {normalizedImageUrls.length > 0 && (
@@ -825,7 +821,7 @@ const ProductsPage: React.FC = () => {
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={url}
-                                alt="preview"
+                                alt="xem trước"
                                 className="h-full w-full object-cover"
                               />
                             </div>
@@ -839,12 +835,12 @@ const ProductsPage: React.FC = () => {
                 {/* Stats */}
                 <section className="space-y-3">
                   <h5 className="text-sm font-semibold text-gray-800 dark:text-white/90">
-                    Stats
+                    Thống kê
                   </h5>
                   <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Rating avg
+                        Điểm đánh giá TB
                       </p>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
                         {selectedProduct.ratingAverage.toFixed(1)}
@@ -852,7 +848,7 @@ const ProductsPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Sold
+                        Đã bán
                       </p>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
                         {selectedProduct.sold}
@@ -860,9 +856,9 @@ const ProductsPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-                        Stock
+                        Tồn kho
                       </p>
-                      <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                      <p className="text-sm font-semibold text-gray-800 dark:text:white/90">
                         {selectedProduct.stock}
                       </p>
                     </div>
@@ -882,7 +878,7 @@ const ProductsPage: React.FC = () => {
               onClick={handleCloseDetails}
               className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
             >
-              Close
+              Đóng
             </button>
             <button
               type="button"
@@ -890,7 +886,7 @@ const ProductsPage: React.FC = () => {
               disabled={isUpdating}
               className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isUpdating ? "Saving..." : "Save"}
+              {isUpdating ? "Đang lưu..." : "Lưu"}
             </button>
           </div>
         </div>
@@ -904,16 +900,16 @@ const ProductsPage: React.FC = () => {
       >
         <div className="w-full max-w-md rounded-3xl bg-white p-6 dark:bg-gray-900">
           <h4 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
-            Add new product
+            Thêm sản phẩm mới
           </h4>
           <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">
-            Create a new product.
+            Tạo một sản phẩm mới.
           </p>
 
           <form onSubmit={handleCreateProduct} className="space-y-4">
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Name
+                Tên sản phẩm
               </label>
               <input
                 type="text"
@@ -925,7 +921,7 @@ const ProductsPage: React.FC = () => {
 
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Category
+                Danh mục
               </label>
               <input
                 type="text"
@@ -937,7 +933,7 @@ const ProductsPage: React.FC = () => {
 
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Price (VND)
+                Giá (VND)
               </label>
               <input
                 type="number"
@@ -953,7 +949,7 @@ const ProductsPage: React.FC = () => {
 
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Stock
+                Tồn kho
               </label>
               <input
                 type="number"
@@ -963,13 +959,13 @@ const ProductsPage: React.FC = () => {
                     e.target.value === "" ? "" : Number(e.target.value)
                   )
                 }
-                className="h-9 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 outline-none focus:border-brand-500 focus:ring-0 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                className="h-9 w-full rounded-lg border border-gray-300 bg:white px-3 text-sm text-gray-800 outline-none focus:border-brand-500 focus:ring-0 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               />
             </div>
 
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Description
+                Mô tả
               </label>
               <textarea
                 value={formDescription}
@@ -982,7 +978,7 @@ const ProductsPage: React.FC = () => {
             {/* Images editor for create */}
             <div>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">
-                Images
+                Ảnh
               </label>
               <div className="space-y-2">
                 {formImageUrls.map((url, index) => (
@@ -1011,7 +1007,7 @@ const ProductsPage: React.FC = () => {
                   onClick={handleAddImageField}
                   className="mt-1 inline-flex items-center rounded-lg border border-dashed border-gray-300 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-white/[0.04]"
                 >
-                  + Add image
+                  + Thêm ảnh
                 </button>
 
                 {normalizedImageUrls.length > 0 && (
@@ -1024,7 +1020,7 @@ const ProductsPage: React.FC = () => {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={url}
-                          alt="preview"
+                          alt="xem trước"
                           className="h-full w-full object-cover"
                         />
                       </div>
@@ -1042,14 +1038,14 @@ const ProductsPage: React.FC = () => {
                 onClick={handleCloseAdd}
                 className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
               >
-                Cancel
+                Huỷ
               </button>
               <button
                 type="submit"
                 disabled={isCreating}
                 className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isCreating ? "Creating..." : "Create"}
+                {isCreating ? "Đang tạo..." : "Tạo"}
               </button>
             </div>
           </form>
@@ -1064,15 +1060,14 @@ const ProductsPage: React.FC = () => {
       >
         <div className="w-full max-w-md rounded-3xl bg-white p-6 dark:bg-gray-900">
           <h4 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
-            Confirm delete
+            Xác nhận xoá
           </h4>
           <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-            Are you sure you want to delete{" "}
+            Bạn có chắc chắn muốn xoá{" "}
             <span className="font-semibold">
-              {selectedProductIds.length} selected product
-              {selectedProductIds.length > 1 ? "s" : ""}
+              {selectedProductIds.length} sản phẩm đã chọn
             </span>
-            ? This action cannot be undone.
+            ? Hành động này không thể hoàn tác.
           </p>
           <div className="flex justify-end gap-3">
             <button
@@ -1080,15 +1075,15 @@ const ProductsPage: React.FC = () => {
               onClick={handleCloseDeleteConfirm}
               className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-white/[0.03]"
             >
-              Cancel
+              Huỷ
             </button>
             <button
               type="button"
               onClick={handleConfirmDelete}
               disabled={isDeleting}
-              className="inline-flex items-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text:white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Đang xoá..." : "Xoá"}
             </button>
           </div>
         </div>

@@ -47,8 +47,8 @@ export default function MonthlySalesChart() {
     {
       name:
         metric === "orders"
-          ? `Orders ${selectedYear}`
-          : `Revenue ${selectedYear}`,
+          ? `Đơn hàng ${selectedYear}`
+          : `Doanh thu ${selectedYear}`,
       data: chartData,
     },
   ];
@@ -81,18 +81,18 @@ export default function MonthlySalesChart() {
     },
     xaxis: {
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Th1",
+        "Th2",
+        "Th3",
+        "Th4",
+        "Th5",
+        "Th6",
+        "Th7",
+        "Th8",
+        "Th9",
+        "Th10",
+        "Th11",
+        "Th12",
       ],
       axisBorder: {
         show: false,
@@ -109,7 +109,7 @@ export default function MonthlySalesChart() {
         formatter: (val: number) =>
           metric === "orders"
             ? val.toFixed(0)
-            : `${(val / 1_000_000).toFixed(1)}M`,
+            : `${(val / 1_000_000).toFixed(1)} triệu`,
       },
     },
     grid: {
@@ -129,7 +129,7 @@ export default function MonthlySalesChart() {
       y: {
         formatter: (val: number) =>
           metric === "orders"
-            ? `${val} orders`
+            ? `${val} đơn hàng`
             : `${val.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -155,7 +155,7 @@ export default function MonthlySalesChart() {
   if (isLoading) {
     return (
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading monthly sales...
+        Đang tải dữ liệu doanh số theo tháng...
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function MonthlySalesChart() {
   if (isError) {
     return (
       <div className="overflow-hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load monthly sales.
+        Không thể tải dữ liệu doanh số theo tháng.
       </div>
     );
   }
@@ -173,12 +173,14 @@ export default function MonthlySalesChart() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Monthly {metric === "orders" ? "Orders" : "Revenue"}
+            {metric === "orders"
+              ? "Đơn hàng theo tháng"
+              : "Doanh thu theo tháng"}
           </h3>
           <p className="mt-1 text-xs text-gray-400">
             {metric === "orders" ? (
               <>
-                {totalOrdersYear.toLocaleString("vi-VN")} orders in{" "}
+                {totalOrdersYear.toLocaleString("vi-VN")} đơn hàng trong{" "}
                 {selectedYear}
               </>
             ) : (
@@ -188,14 +190,13 @@ export default function MonthlySalesChart() {
                   currency: "VND",
                   maximumFractionDigits: 0,
                 })}{" "}
-                in {selectedYear}
+                trong {selectedYear}
               </>
             )}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Toggle Orders / Revenue */}
           <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 text-xs dark:border-gray-700 dark:bg-gray-900">
             <button
               onClick={() => setMetric("orders")}
@@ -205,7 +206,7 @@ export default function MonthlySalesChart() {
                   : "text-gray-500 dark:text-gray-400"
               }`}
             >
-              Orders
+              Đơn hàng
             </button>
             <button
               onClick={() => setMetric("revenue")}
@@ -215,11 +216,10 @@ export default function MonthlySalesChart() {
                   : "text-gray-500 dark:text-gray-400"
               }`}
             >
-              Revenue
+              Doanh thu
             </button>
           </div>
 
-          {/* Year dropdown giữ style cũ */}
           <div className="relative inline-block">
             <button
               onClick={toggleDropdown}
@@ -237,11 +237,7 @@ export default function MonthlySalesChart() {
               </svg>
             </button>
 
-            <Dropdown
-              isOpen={isOpen}
-              onClose={closeDropdown}
-              className="w-32 p-2"
-            >
+            <Dropdown isOpen={isOpen} onClose={closeDropdown} className="w-32 p-2">
               {years.map((year) => (
                 <DropdownItem
                   key={year}

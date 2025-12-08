@@ -33,7 +33,7 @@ export default function UserInfoCard() {
   const [nameInput, setNameInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
   const [genderInput, setGenderInput] = useState("");
-  const [birthdayInput, setBirthdayInput] = useState(""); // YYYY-MM-DD
+  const [birthdayInput, setBirthdayInput] = useState("");
   const [bankAccountInput, setBankAccountInput] = useState("");
   const [creditCardInput, setCreditCardInput] = useState("");
 
@@ -95,7 +95,7 @@ export default function UserInfoCard() {
     <div className="rounded-2xl border border-gray-200 bg-white px-5 py-5 dark:border-white/[0.05] dark:bg-white/[0.03] sm:px-6 sm:py-6 lg:px-8 lg:py-7">
       <div className="flex items-center justify-between gap-4">
         <h4 className="text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-          Personal Information
+          Thông tin cá nhân
         </h4>
 
         <button
@@ -116,14 +116,14 @@ export default function UserInfoCard() {
               fill="currentColor"
             />
           </svg>
-          <span>Edit</span>
+          <span>Chỉnh sửa</span>
         </button>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-x-24 gap-y-6 md:grid-cols-2">
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Name
+            Họ và tên
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {nameInput}
@@ -132,7 +132,7 @@ export default function UserInfoCard() {
 
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Phone
+            Số điện thoại
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {phoneInput}
@@ -141,7 +141,7 @@ export default function UserInfoCard() {
 
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Gender
+            Giới tính
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {genderInput}
@@ -150,7 +150,7 @@ export default function UserInfoCard() {
 
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Bank Account
+            Tài khoản ngân hàng
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {bankAccountInput}
@@ -159,7 +159,7 @@ export default function UserInfoCard() {
 
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Birthday
+            Ngày sinh
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {displayBirthday}
@@ -168,7 +168,7 @@ export default function UserInfoCard() {
 
         <div>
           <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Credit Card
+            Thẻ tín dụng
           </p>
           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
             {creditCardInput}
@@ -180,10 +180,10 @@ export default function UserInfoCard() {
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
           <div className="px-2 pr-10">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Personal Information
+              Chỉnh sửa thông tin cá nhân
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              Cập nhật thông tin để hồ sơ của bạn luôn chính xác.
             </p>
           </div>
 
@@ -191,7 +191,7 @@ export default function UserInfoCard() {
             <div className="custom-scrollbar max-h-[450px] overflow-y-auto px-2 pb-3">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Full Name</Label>
+                  <Label>Họ và tên</Label>
                   <Input
                     type="text"
                     value={nameInput}
@@ -202,7 +202,7 @@ export default function UserInfoCard() {
                 </div>
 
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Phone</Label>
+                  <Label>Số điện thoại</Label>
                   <Input
                     type="text"
                     value={phoneInput}
@@ -213,7 +213,7 @@ export default function UserInfoCard() {
                 </div>
 
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Gender</Label>
+                  <Label>Giới tính</Label>
                   <Input
                     type="text"
                     value={genderInput}
@@ -224,7 +224,7 @@ export default function UserInfoCard() {
                 </div>
 
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Birthday</Label>
+                  <Label>Ngày sinh</Label>
                   <Input
                     type="date"
                     value={birthdayInput}
@@ -235,7 +235,7 @@ export default function UserInfoCard() {
                 </div>
 
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Bank Account</Label>
+                  <Label>Tài khoản ngân hàng</Label>
                   <Input
                     type="text"
                     value={bankAccountInput}
@@ -246,7 +246,7 @@ export default function UserInfoCard() {
                 </div>
 
                 <div className="col-span-2 lg:col-span-1">
-                  <Label>Credit Card</Label>
+                  <Label>Thẻ tín dụng</Label>
                   <Input
                     type="text"
                     value={creditCardInput}
@@ -260,10 +260,10 @@ export default function UserInfoCard() {
 
             <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
               <Button size="sm" variant="outline" type="button" onClick={closeModal}>
-                Close
+                Đóng
               </Button>
               <Button size="sm" type="submit" disabled={isUpdating}>
-                {isUpdating ? "Saving..." : "Save Changes"}
+                {isUpdating ? "Đang lưu..." : "Lưu thay đổi"}
               </Button>
             </div>
           </form>

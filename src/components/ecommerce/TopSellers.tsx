@@ -17,7 +17,7 @@ export default function TopSellers() {
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Top Sellers
+          Sản phẩm bán chạy
         </h3>
       </div>
 
@@ -29,25 +29,25 @@ export default function TopSellers() {
                 isHeader
                 className="py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Products
+                Sản phẩm
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Category
+                Danh mục
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Sales Volume
+                Số lượng bán
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Rating
+                Đánh giá
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -55,20 +55,16 @@ export default function TopSellers() {
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
             {isLoading && (
               <TableRow>
-                <TableCell
-                  className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400"
-                >
-                  Loading...
+                <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400">
+                  Đang tải...
                 </TableCell>
               </TableRow>
             )}
 
             {isError && !isLoading && (
               <TableRow>
-                <TableCell
-                  className="py-4 text-center text-theme-sm text-red-500"
-                >
-                  Failed to load data
+                <TableCell className="py-4 text-center text-theme-sm text-red-500">
+                  Không thể tải dữ liệu
                 </TableCell>
               </TableRow>
             )}
@@ -94,7 +90,7 @@ export default function TopSellers() {
                           {product.productName}
                         </p>
                         <span className="text-theme-xs text-gray-500 dark:text-gray-400">
-                          {product.orderCount} orders
+                          {product.orderCount} đơn hàng
                         </span>
                       </div>
                     </div>

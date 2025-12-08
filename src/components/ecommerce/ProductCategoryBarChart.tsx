@@ -14,7 +14,7 @@ export default function ProductCategoryBarChart() {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]">
-        Loading category stats...
+        Đang tải thống kê danh mục...
       </div>
     );
   }
@@ -22,7 +22,7 @@ export default function ProductCategoryBarChart() {
   if (isError) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-600">
-        Failed to load category stats.
+        Không thể tải thống kê danh mục.
       </div>
     );
   }
@@ -77,23 +77,23 @@ export default function ProductCategoryBarChart() {
   };
 
   const series = [
-    { name: "Sold", data: soldSeries },
-    { name: "In stock", data: stockSeries },
+    { name: "Đã bán", data: soldSeries },
+    { name: "Tồn kho", data: stockSeries },
   ];
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Products by Category
+          Sản phẩm theo danh mục
         </h3>
         <span className="text-xs text-gray-400">
-          {data.length} categories
+          {data.length} danh mục
         </span>
       </div>
 
       {data.length === 0 ? (
-        <p className="text-sm text-gray-400">No data.</p>
+        <p className="text-sm text-gray-400">Không có dữ liệu.</p>
       ) : (
         <div className="max-w-full overflow-x-auto custom-scrollbar">
           <div className="-ml-5 min-w-[650px] pl-2 xl:min-w-full">

@@ -18,16 +18,20 @@ function formatCurrencyVND(amount: number) {
   });
 }
 
-function getStatusBadge(status: string): { label: string; color: "success" | "warning" | "error" } {
+function getStatusBadge(
+  status: string
+): { label: string; color: "success" | "warning" | "error" } {
   switch (status) {
     case "Delivered":
-      return { label: "Delivered", color: "success" };
+      return { label: "Đã giao", color: "success" };
     case "Pending":
-      return { label: "Pending", color: "warning" };
+      return { label: "Đang xử lý", color: "warning" };
+      case "Processed":
+      return { label: "Đang xử lý", color: "warning" };
     case "Cancelled":
-      return { label: "Canceled", color: "error" };
+      return { label: "Đã hủy", color: "error" };
     case "NotConfirm":
-      return { label: "Not confirmed", color: "warning" };
+      return { label: "Chưa xác nhận", color: "warning" };
     default:
       return { label: status, color: "warning" };
   }
@@ -41,13 +45,13 @@ export default function RecentOrders() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Đơn hàng gần đây
           </h3>
         </div>
 
         <div className="flex items-center gap-3">
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            See all
+            Xem tất cả
           </button>
         </div>
       </div>
@@ -59,25 +63,25 @@ export default function RecentOrders() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                OrderID
+                Mã đơn hàng
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                UserID
+                Mã người dùng
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Price
+                Tổng tiền
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Status
+                Trạng thái
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -85,20 +89,16 @@ export default function RecentOrders() {
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
             {isLoading && (
               <TableRow>
-                <TableCell
-                  className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400"
-                >
-                  Loading...
+                <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400">
+                  Đang tải...
                 </TableCell>
               </TableRow>
             )}
 
             {isError && !isLoading && (
               <TableRow>
-                <TableCell
-                  className="py-4 text-center text-theme-sm text-red-500"
-                >
-                  Failed to load data
+                <TableCell className="py-4 text-center text-theme-sm text-red-500">
+                  Không thể tải dữ liệu
                 </TableCell>
               </TableRow>
             )}
