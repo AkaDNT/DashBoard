@@ -30,7 +30,7 @@ export default function AuthLayout({
                   />
                 </Link>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  Tap. Bag. Brag. Your pocket electronics store with daily deals, transparent pricing, verified reviews, fast delivery and easy returns.
+                  Click. Track. Scale. TechShop Admin: Bảng điều khiển với báo cáo đa dạng, kho hàng thông minh, tự động hóa đơn hàng và lợi nhuận luôn trong tầm kiểm soát.
                 </p>
               </div>
             </div>

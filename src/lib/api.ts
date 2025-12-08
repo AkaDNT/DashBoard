@@ -25,6 +25,19 @@ export interface ReceiveInfo {
   address: string;
 }
 
+export interface TopCustomerDto {
+  userId: number;
+  email: string | null;
+  username: string | null;
+  name: string | null;
+  avatar: string | null;
+  totalOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
+  totalSpent: number;
+}
+
+
 export interface Order {
   orderID: string;
   userID: number;
@@ -687,6 +700,11 @@ getDailyOrderStats: build.query<AdminDailyOrderStat[], { days?: number } | void>
       }),
     }),
 
+    getTopCustomers: build.query<TopCustomerDto[], void>({
+  query: () => ({ url: "Admin/top-customers", method: "GET" }),
+}),
+
+
   }),
     
 });
@@ -735,4 +753,5 @@ export const {
   useGetProductCategoryStatsQuery,
   useGetRatingDistributionQuery,
   useGetUserDemographicsQuery,
+  useGetTopCustomersQuery
 } = api;
