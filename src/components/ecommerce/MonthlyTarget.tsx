@@ -74,17 +74,16 @@ export default function MonthlyTarget() {
   }
 
   const displayPercent = Math.abs(percentChange);
+
+  // 1 chữ số thập phân cho câu mô tả
   const percentLabel = `${displayPercent.toFixed(1)}%`;
+
+  // 2 chữ số thập phân cho số ở giữa chart (giống badgeText nhưng 2 decimal)
+  const sign = diffRevenue > 0 ? "+" : diffRevenue < 0 ? "-" : "";
+  const centerText = `${sign}${displayPercent.toFixed(2)}%`;
 
   const chartPercent = Math.min(Math.max(displayPercent, 0), 100);
   const series = [Number(chartPercent.toFixed(2))];
-
-  const badgeText =
-    diffRevenue > 0
-      ? `+${percentLabel}`
-      : diffRevenue < 0
-      ? `-${percentLabel}`
-      : `${percentLabel}`;
 
   let changeSentence: string;
   if (lastMonthRevenue === 0 && selectedMonthRevenue === 0) {
@@ -96,6 +95,14 @@ export default function MonthlyTarget() {
   } else {
     changeSentence = "equal to the same period last month.";
   }
+
+  // Màu số ở giữa chart (tương tự badgeText: tăng xanh, giảm đỏ, bằng xám)
+  const valueColor =
+    diffRevenue > 0
+      ? "#16a34a" // gần giống text-success-600
+      : diffRevenue < 0
+      ? "#dc2626" // gần giống text-red-600
+      : "#1D2939"; // mặc định giống màu cũ
 
   const options: ApexOptions = {
     colors: ["#465FFF"],
@@ -126,11 +133,12 @@ export default function MonthlyTarget() {
           value: {
             fontSize: "36px",
             fontWeight: "600",
+            // giữ nguyên vị trí như code gốc
             offsetY: -40,
-            color: "#1D2939",
-            formatter: function (val) {
-              return val + "%";
-            },
+            // đổi màu theo tăng/giảm/bằng
+            color: valueColor,
+            // hiển thị dạng +12.34%, -05.67%, 0.00%
+            formatter: () => centerText,
           },
         },
       },
@@ -150,7 +158,6 @@ export default function MonthlyTarget() {
     if (!value) return;
 
     if (value > currentMonthValue) return;
-
     if (value < minMonthValue) return;
 
     setSelectedMonth(value);
@@ -212,11 +219,8 @@ export default function MonthlyTarget() {
               height={330}
             />
           </div>
-
-          <span className="absolute left-1/2 top	full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
-            {badgeText}
-          </span>
         </div>
+
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
           MTD of {selectedMonthLabel} is{" "}
           {formatCurrency(selectedMonthRevenue)}, {changeSentence}

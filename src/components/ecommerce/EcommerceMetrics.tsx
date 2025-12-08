@@ -143,63 +143,70 @@ export const EcommerceMetrics = () => {
       </div>
 
       {/* Revenue */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
-          <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
-            ₫
-          </span>
-        </div>
-        <div className="mt-5 flex items-end justify-between">
-          <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Revenue (Delivered)
-            </span>
-            <h4 className="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90">
-              {isOrdersLoading || isOrdersError
-                ? "Loading..."
-                : totalRevenue.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                    maximumFractionDigits: 0,
-                  })}
-            </h4>
-          </div>
-        </div>
-      </div>
+<div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
+    <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+      ₫
+    </span>
+  </div>
+
+  <div className="mt-5 flex items-end justify-between">
+    <div className="min-w-0">
+      <span className="text-sm text-gray-500 dark:text-gray-400">
+        Revenue (Delivered)
+      </span>
+      <h4
+        className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight"
+      >
+        {isOrdersLoading || isOrdersError
+          ? "Loading..."
+          : totalRevenue.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+              maximumFractionDigits: 0,
+            })}
+      </h4>
+    </div>
+  </div>
+</div>
+
 
       {/* Avg Order Value / Products */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
-          <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-            AOV
-          </span>
-        </div>
-        <div className="mt-5 space-y-1">
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                Avg Order Value
-              </span>
-              <h4 className="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90">
-                {isOrdersLoading || isOrdersError
-                  ? "Loading..."
-                  : avgOrderValue.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                      maximumFractionDigits: 0,
-                    })}
-              </h4>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400">
-            Products:{" "}
-            {totalProducts !== null
-              ? totalProducts.toLocaleString("vi-VN")
-              : "..."}{" "}
-            • Cancel rate: {cancelRate.toFixed(1)}%
-          </p>
-        </div>
+<div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800">
+    <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+      AOV
+    </span>
+  </div>
+  <div className="mt-5 space-y-1">
+    <div className="flex items-end justify-between">
+      <div className="min-w-0">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Avg Order Value
+        </span>
+        <h4
+          className="mt-2 text-base sm:text-lg font-bold text-gray-800 dark:text-white/90 break-all leading-tight"
+        >
+          {isOrdersLoading || isOrdersError
+            ? "Loading..."
+            : avgOrderValue.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+                maximumFractionDigits: 0,
+              })}
+        </h4>
       </div>
+    </div>
+    <p className="text-xs text-gray-400">
+      Products:{" "}
+      {totalProducts !== null
+        ? totalProducts.toLocaleString("vi-VN")
+        : "..."}{" "}
+      • Cancel rate: {cancelRate.toFixed(1)}%
+    </p>
+  </div>
+</div>
+
     </div>
   );
 };
